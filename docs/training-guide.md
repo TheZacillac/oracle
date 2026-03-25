@@ -167,8 +167,8 @@ from transformers import TrainingArguments
 # -----------------------------------------------------------------
 
 # Nemotron-3-Nano-4B — Mamba2-Transformer hybrid (3.97B params)
-# Uses Unsloth's optimized variant for faster training
-MODEL_NAME = "unsloth/NVIDIA-Nemotron-3-Nano-4B"
+# Official NVIDIA model from Hugging Face
+MODEL_NAME = "nvidia/NVIDIA-Nemotron-3-Nano-4B-BF16"
 
 # Nemotron-3-Nano supports up to 262K context, but 4096-8192 is
 # sufficient for training and much more memory-efficient
