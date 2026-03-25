@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "oracle"
+version = "0.1.0"
+description = "Domain name industry training dataset generator for the Arcanum Suite"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.0",
+    "rich>=13.0",
+    "click>=8.0",
+    "tiktoken>=0.7",
+]
+
+[project.optional-dependencies]
+synthetic = [
+    "anthropic>=0.40",
+    "openai>=1.50",
+]
+all = [
+    "oracle[synthetic]",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.8",
+]
+
+[project.scripts]
+oracle = "oracle.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/oracle"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
