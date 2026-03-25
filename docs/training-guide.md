@@ -14,7 +14,10 @@ Step-by-step process for generating the Oracle dataset, then fine-tuning NVIDIA'
 
 - NVIDIA DGX Spark (Grace Blackwell GB10, 128GB unified memory)
 - Oracle project installed on your primary machine (for dataset generation)
-- Anthropic or OpenAI API key (for synthetic data generation)
+- An LLM provider for synthetic data generation (one of):
+  - **Ollama** running locally (free, no API key) — recommended if you have a capable local model
+  - **Anthropic API key** — highest quality generation with Claude
+  - **OpenAI API key** — alternative cloud provider
 - Hugging Face account (for model access)
 
 ---
@@ -30,13 +33,31 @@ source .venv/bin/activate
 pip install -e ".[all,dev]"
 ```
 
-### 1.2 Set your API key
+### 1.2 Configure your LLM provider
+
+Choose one of the following:
+
+**Option A: Ollama (local, free)**
+
+No API key needed. Just ensure Ollama is running and has a model pulled:
 
 ```bash
-# For Anthropic (recommended)
-export ANTHROPIC_API_KEY="sk-ant-..."
+# Pull a model (if you haven't already)
+ollama pull nemotron-3-nano
 
-# Or for OpenAI
+# Verify it's running
+ollama list
+```
+
+**Option B: Anthropic (cloud)**
+
+```bash
+export ANTHROPIC_API_KEY="sk-ant-..."
+```
+
+**Option C: OpenAI (cloud)**
+
+```bash
 export OPENAI_API_KEY="sk-..."
 ```
 
@@ -53,17 +74,40 @@ oracle fetch-sources
 Start with `small` to validate the pipeline, then scale up:
 
 ```bash
+# --- With Ollama (local) ---
 # Test run — ~1,300 examples
+oracle plan --size small --provider ollama
+
+# Use a specific Ollama model
+oracle plan --size small --provider ollama --model qwen3:14b
+
+# --- With Anthropic (cloud) ---
 oracle plan --size small --provider anthropic
 
-# Once validated, generate the full dataset — ~4,200 examples
-oracle plan --size medium --provider anthropic
-
-# For maximum coverage — ~10,500 examples
-oracle plan --size large --provider anthropic
+# --- With OpenAI (cloud) ---
+oracle plan --size small --provider openai
 ```
 
-This will take time depending on the plan size (the LLM generates each batch). Generated data lands in `data/generated/`.
+Once the small plan looks good, scale up:
+
+```bash
+# Full dataset — ~4,200 examples
+oracle plan --size medium --provider ollama
+
+# Maximum coverage — ~10,500 examples
+oracle plan --size large --provider ollama
+```
+
+You can also generate a single category at a time if you want to test or iterate:
+
+```bash
+oracle generate --category dns --difficulty intermediate --count 5 --provider ollama
+oracle generate --category disputes --difficulty advanced --count 3 --provider ollama --model llama3.1:8b
+```
+
+Generated data lands in `data/generated/`.
+
+> **Tip:** Larger models produce better structured JSON output. If you see high rejection rates during validation with a small model, try a larger one or switch to a cloud provider for the complex formats (multi-turn, scenario, tool-use).
 
 ### 1.5 Validate the dataset
 
@@ -81,7 +125,7 @@ Review the validation report. Check for:
 This increases question diversity without needing to generate entirely new answers:
 
 ```bash
-oracle augment data/generated/ --count 2 --provider anthropic
+oracle augment data/generated/ --count 2 --provider ollama
 ```
 
 ### 1.7 Export with train/val/test splits

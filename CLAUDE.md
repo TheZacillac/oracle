@@ -66,6 +66,12 @@ Each training example is a JSONL record:
 2. **RFC Extraction** — Parse RFCs into structured knowledge, generate Q&A from sections
 3. **Source Extraction** — Transform ICANN/IANA documents into training pairs
 
+## LLM Providers
+
+Supports three providers for synthetic generation: `anthropic`, `openai`, `ollama`.
+Ollama uses the OpenAI-compatible API at `localhost:11434/v1` (no API key needed).
+Default Ollama model: `nemotron-3-nano:latest`. Override with `--model`.
+
 ## Key Conventions
 
 - All data models use Pydantic v2
@@ -82,8 +88,15 @@ Each training example is a JSONL record:
 # Install
 pip install -e ".[all,dev]"
 
-# Generate synthetic data for a category
+# Generate synthetic data for a category (cloud provider)
 oracle generate --category dns --difficulty intermediate --count 50
+
+# Generate with local Ollama
+oracle generate --category dns --difficulty intermediate --count 50 --provider ollama
+oracle generate --category dns --provider ollama --model qwen3:14b
+
+# Execute a generation plan
+oracle plan --size medium --provider ollama
 
 # Fetch source documents
 oracle fetch-sources --type rfc
@@ -91,8 +104,14 @@ oracle fetch-sources --type rfc
 # Export to NeMo format
 oracle export --format nemo --output data/exports/
 
+# Export with train/val/test splits
+oracle export-splits data/generated/ --format openai_chat
+
 # Validate dataset
 oracle validate data/generated/
+
+# Augment with paraphrased questions
+oracle augment data/generated/ --provider ollama
 
 # Show taxonomy coverage
 oracle taxonomy --stats

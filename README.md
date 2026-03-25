@@ -82,6 +82,53 @@ oracle export-splits data/generated/ --format openai_chat
 oracle augment data/generated/ --count 2
 ```
 
+## LLM Providers
+
+Oracle supports three providers for generating training data:
+
+### Anthropic (Claude)
+
+```bash
+export ANTHROPIC_API_KEY="sk-ant-..."
+oracle generate --category dns --provider anthropic
+oracle generate --category dns --provider anthropic --model claude-sonnet-4-20250514
+```
+
+### OpenAI
+
+```bash
+export OPENAI_API_KEY="sk-..."
+oracle generate --category dns --provider openai
+oracle generate --category dns --provider openai --model gpt-4o
+```
+
+### Ollama (Local)
+
+No API key needed — uses your local Ollama instance at `localhost:11434`:
+
+```bash
+# Ensure Ollama is running and the model is pulled
+ollama pull nemotron-3-nano
+
+# Generate with the default Ollama model (nemotron-3-nano:latest)
+oracle generate --category dns --provider ollama
+
+# Use a specific Ollama model
+oracle generate --category dns --provider ollama --model llama3.1:8b
+oracle generate --category dns --provider ollama --model qwen3:14b
+oracle generate --category dns --provider ollama --model gemma3:27b
+
+# Full generation plan with Ollama
+oracle plan --size medium --provider ollama
+
+# Augment with Ollama
+oracle augment data/generated/ --provider ollama
+```
+
+All commands that accept `--provider` support all three options: `anthropic`, `openai`, and `ollama`. The `--model` flag overrides the default model for any provider.
+
+> **Note:** Larger models produce higher-quality training data. For best results with Ollama, use the largest model your hardware can run. Smaller models may struggle with the structured JSON output format required for multi-turn and tool-use examples.
+
 ## Generation Plans
 
 Three preset plans control the scale and distribution of generated data:
@@ -97,7 +144,7 @@ Each plan specifies a difficulty distribution (beginner through expert) and form
 ## Generation Strategies
 
 ### Synthetic Generation
-An LLM generates expert Q&A pairs given topic context, difficulty guidance, and format instructions. Supports Anthropic (Claude) and OpenAI APIs.
+An LLM generates expert Q&A pairs given topic context, difficulty guidance, and format instructions. Supports Anthropic (Claude), OpenAI, and Ollama (local models).
 
 ### RFC Extraction
 Fetches RFCs referenced in the taxonomy, parses them into sections, and generates Q&A pairs grounded in specific RFC text. Caches documents locally.
