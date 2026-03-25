@@ -384,6 +384,78 @@ DNS_DEBUG_SOURCES = {
 }
 
 
+# =============================================================================
+# Web Hosting & Content Delivery
+# =============================================================================
+HOSTING_CDN_SOURCES = {
+    "cloudflare_cache": {
+        "name": "Cloudflare CDN — Cache Documentation",
+        "url": "https://developers.cloudflare.com/cache/",
+        "category": "hosting",
+    },
+    "cloudflare_load_balancing": {
+        "name": "Cloudflare Load Balancing Documentation",
+        "url": "https://developers.cloudflare.com/load-balancing/",
+        "category": "hosting",
+    },
+    "aws_cloudfront": {
+        "name": "Amazon CloudFront Developer Guide",
+        "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/",
+        "category": "hosting",
+    },
+    "akamai_cdn": {
+        "name": "Akamai CDN Documentation",
+        "url": "https://techdocs.akamai.com/cdn/docs",
+        "category": "hosting",
+    },
+    "fastly_docs": {
+        "name": "Fastly Documentation",
+        "url": "https://docs.fastly.com/",
+        "category": "hosting",
+    },
+    "vercel_domains": {
+        "name": "Vercel — DNS and Custom Domains Documentation",
+        "url": "https://vercel.com/docs/projects/domains",
+        "category": "hosting",
+    },
+    "netlify_dns": {
+        "name": "Netlify — DNS and HTTPS Documentation",
+        "url": "https://docs.netlify.com/domains-https/",
+        "category": "hosting",
+    },
+    "github_pages_domains": {
+        "name": "GitHub Pages — Custom Domain Configuration",
+        "url": "https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site",
+        "category": "hosting",
+    },
+    "cloudflare_workers": {
+        "name": "Cloudflare Workers Documentation",
+        "url": "https://developers.cloudflare.com/workers/",
+        "category": "hosting",
+    },
+    "aws_global_accelerator": {
+        "name": "AWS Global Accelerator Documentation",
+        "url": "https://docs.aws.amazon.com/global-accelerator/",
+        "category": "hosting",
+    },
+    "azure_front_door": {
+        "name": "Azure Front Door Documentation",
+        "url": "https://learn.microsoft.com/en-us/azure/frontdoor/",
+        "category": "hosting",
+    },
+    "keycdn_support": {
+        "name": "KeyCDN Support and Documentation",
+        "url": "https://www.keycdn.com/support",
+        "category": "hosting",
+    },
+    "bunnycdn_docs": {
+        "name": "BunnyCDN Documentation",
+        "url": "https://docs.bunny.net/",
+        "category": "hosting",
+    },
+}
+
+
 def _all_dns_software_sources() -> dict:
     """Combine all DNS software source dictionaries."""
     return {
@@ -394,6 +466,7 @@ def _all_dns_software_sources() -> dict:
         **CLOUD_DNS_SOURCES,
         **DNS_PROVIDER_SOURCES,
         **DNS_DEBUG_SOURCES,
+        **HOSTING_CDN_SOURCES,
     }
 
 

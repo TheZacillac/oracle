@@ -215,6 +215,31 @@ ICANN_SOURCES = {
         "url": "https://pti.icann.org/",
         "category": "iana",
     },
+    "iana_about": {
+        "name": "IANA — About the Internet Assigned Numbers Authority",
+        "url": "https://www.iana.org/about",
+        "category": "iana",
+    },
+    "iana_ksk_ceremonies": {
+        "name": "IANA Root Zone KSK Ceremonies",
+        "url": "https://www.iana.org/dnssec/ceremonies",
+        "category": "iana",
+    },
+    "iana_numbering_resources": {
+        "name": "IANA — Number Resources (IP Addresses, ASNs)",
+        "url": "https://www.iana.org/numbers",
+        "category": "iana",
+    },
+    "iana_root_dnssec": {
+        "name": "IANA Root Zone DNSSEC Documentation",
+        "url": "https://www.iana.org/dnssec",
+        "category": "iana",
+    },
+    "iana_time_zones": {
+        "name": "IANA Time Zone Database",
+        "url": "https://www.iana.org/time-zones",
+        "category": "iana",
+    },
     "icann_budget_ops": {
         "name": "ICANN Budget and Operations Plan",
         "url": "https://www.icann.org/resources/pages/governance/current-en",

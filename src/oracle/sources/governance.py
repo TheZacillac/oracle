@@ -185,6 +185,48 @@ CYBERSECURITY_AGENCY_SOURCES = {
 }
 
 
+# =============================================================================
+# Compliance & Regulatory
+# =============================================================================
+COMPLIANCE_SOURCES = {
+    "eu_digital_services_act": {
+        "name": "EU Digital Services Act (Regulation 2022/2065)",
+        "url": "https://eur-lex.europa.eu/eli/reg/2022/2065",
+        "category": "compliance",
+    },
+    "ofac_sanctions_search": {
+        "name": "OFAC Sanctions List Search (U.S. Treasury)",
+        "url": "https://sanctionssearch.ofac.treas.gov/",
+        "category": "compliance",
+    },
+    "eu_sanctions_map": {
+        "name": "EU Sanctions Map",
+        "url": "https://sanctionsmap.eu/",
+        "category": "compliance",
+    },
+    "nominet_policy": {
+        "name": "Nominet — UK Domain Policy and Regulations",
+        "url": "https://www.nominet.uk/policy/",
+        "category": "compliance",
+    },
+    "cnnic_regulations": {
+        "name": "CNNIC — China Domain Name Regulations",
+        "url": "https://www.cnnic.net.cn/en/",
+        "category": "compliance",
+    },
+    "auda_policy": {
+        "name": "auDA — Australian Domain Name Policy",
+        "url": "https://www.auda.org.au/policy",
+        "category": "compliance",
+    },
+    "icann_whois_gdpr_temp_spec": {
+        "name": "ICANN gTLD Registration Data Temporary Specification (WHOIS/GDPR)",
+        "url": "https://www.icann.org/resources/pages/gtld-registration-data-specs-en",
+        "category": "compliance",
+    },
+}
+
+
 def _all_governance_sources() -> dict:
     """Combine all governance source dictionaries."""
     return {
@@ -192,6 +234,7 @@ def _all_governance_sources() -> dict:
         **GOVERNANCE_FORUM_SOURCES,
         **RIR_SOURCES,
         **CYBERSECURITY_AGENCY_SOURCES,
+        **COMPLIANCE_SOURCES,
     }
 
 

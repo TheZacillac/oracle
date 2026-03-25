@@ -281,6 +281,41 @@ INDUSTRY_BUSINESS_SOURCES = {
         "url": "https://namescon.com/",
         "category": "industry",
     },
+    "domain_name_wire_industry": {
+        "name": "Domain Name Wire — Industry News and Analysis",
+        "url": "https://domainnamewire.com/",
+        "category": "industry",
+    },
+    "thedomains": {
+        "name": "TheDomains.com — Domain Industry Commentary",
+        "url": "https://www.thedomains.com/",
+        "category": "industry",
+    },
+    "circleid": {
+        "name": "CircleID — Internet Infrastructure and Policy",
+        "url": "https://www.circleid.com/",
+        "category": "industry",
+    },
+    "domain_investing": {
+        "name": "Domain Investing — Domain Investment Blog",
+        "url": "https://domaininvesting.com/",
+        "category": "industry",
+    },
+    "icann_registrar_advisory": {
+        "name": "ICANN Registrar Resources and Advisory",
+        "url": "https://www.icann.org/resources/pages/registrars-0d-2012-02-25-en",
+        "category": "industry",
+    },
+    "internet_commerce_assoc": {
+        "name": "Internet Commerce Association — Domain Industry Advocacy",
+        "url": "https://www.internetcommerce.org/",
+        "category": "industry",
+    },
+    "domain_pulse": {
+        "name": "Domain Pulse — European Domain Industry Conference",
+        "url": "https://domainpulse.com/",
+        "category": "industry",
+    },
 }
 
 # =============================================================================
@@ -336,6 +371,190 @@ RETAIL_REGISTRAR_SOURCES = {
         "name": "IONOS Domain Management Help",
         "url": "https://www.ionos.com/help/domains/",
         "category": "registrars",
+    },
+}
+
+# =============================================================================
+# Brand Protection
+# =============================================================================
+BRAND_PROTECTION_SOURCES = {
+    "wipo_magazine_brand": {
+        "name": "WIPO Magazine — Domain Brand Protection Articles",
+        "url": "https://www.wipo.int/wipo_magazine/en/",
+        "category": "brand_protection",
+    },
+    "markmonitor_brand_protection": {
+        "name": "MarkMonitor (Clarivate) — Domain Brand Protection Guide",
+        "url": "https://clarivate.com/products/ip-intelligence/trademark-research-and-protection/markmonitor-domain-management/",
+        "category": "brand_protection",
+    },
+    "icann_tmch_resources": {
+        "name": "ICANN Trademark Clearinghouse (TMCH) Resources",
+        "url": "https://www.icann.org/resources/pages/tmch-2012-09-19-en",
+        "category": "brand_protection",
+    },
+    "identity_digital_dpml": {
+        "name": "Identity Digital — Domains Protected Marks List (DPML)",
+        "url": "https://www.identity.digital/services/dpml",
+        "category": "brand_protection",
+    },
+    "icm_adultblock": {
+        "name": "ICM Registry — AdultBlock",
+        "url": "https://www.icmregistry.com/adultblock/",
+        "category": "brand_protection",
+    },
+    "globalblock": {
+        "name": "GlobalBlock — Cross-Registry Domain Blocking",
+        "url": "https://www.globalblock.com/",
+        "category": "brand_protection",
+    },
+    "fortra_phishlabs": {
+        "name": "Fortra (PhishLabs) — Brand Protection",
+        "url": "https://www.fortra.com/products/phishing-protection",
+        "category": "brand_protection",
+    },
+    "bolster_ai": {
+        "name": "Bolster AI — Automated Brand Protection",
+        "url": "https://bolster.ai/",
+        "category": "brand_protection",
+    },
+    "red_points": {
+        "name": "Red Points — Brand Protection Platform",
+        "url": "https://www.redpoints.com/",
+        "category": "brand_protection",
+    },
+    "corsearch": {
+        "name": "Corsearch — Brand Protection and Clearance",
+        "url": "https://corsearch.com/",
+        "category": "brand_protection",
+    },
+}
+
+# =============================================================================
+# Domain Valuation & Aftermarket
+# =============================================================================
+AFTERMARKET_SOURCES = {
+    "sedo": {
+        "name": "Sedo — Domain Marketplace",
+        "url": "https://sedo.com/",
+        "category": "aftermarket",
+    },
+    "afternic": {
+        "name": "Afternic (GoDaddy) — Domain Aftermarket",
+        "url": "https://www.afternic.com/",
+        "category": "aftermarket",
+    },
+    "godaddy_auctions": {
+        "name": "GoDaddy Auctions — Domain Auction Platform",
+        "url": "https://auctions.godaddy.com/",
+        "category": "aftermarket",
+    },
+    "dn_journal": {
+        "name": "DN Journal — Domain Industry News and Sales Reports",
+        "url": "https://dnjournal.com/",
+        "category": "aftermarket",
+    },
+    "namebio": {
+        "name": "NameBio — Domain Sales History Database",
+        "url": "https://namebio.com/",
+        "category": "aftermarket",
+    },
+    "godaddy_domain_appraisal": {
+        "name": "GoDaddy Domain Value Appraisal (Estibot)",
+        "url": "https://www.godaddy.com/domain-value-appraisal",
+        "category": "aftermarket",
+    },
+    "park_io": {
+        "name": "Park.io — Expired Domain Catching Service",
+        "url": "https://park.io/",
+        "category": "aftermarket",
+    },
+    "dan_com": {
+        "name": "DAN.com (GoDaddy) — Domain Marketplace",
+        "url": "https://dan.com/",
+        "category": "aftermarket",
+    },
+    "squadhelp": {
+        "name": "SquadHelp — Naming and Domain Marketplace",
+        "url": "https://www.squadhelp.com/",
+        "category": "aftermarket",
+    },
+    "domain_name_wire": {
+        "name": "Domain Name Wire — Domain Industry Blog",
+        "url": "https://domainnamewire.com/",
+        "category": "aftermarket",
+    },
+}
+
+# =============================================================================
+# Domain Blocking & Protection
+# =============================================================================
+BLOCKING_SOURCES = {
+    "blocking_dpml_identity_digital": {
+        "name": "Identity Digital — DPML Domain Blocking Service",
+        "url": "https://www.identity.digital/services/dpml",
+        "category": "blocking",
+    },
+    "blocking_adultblock": {
+        "name": "ICM Registry — AdultBlock Domain Blocking",
+        "url": "https://www.icmregistry.com/adultblock/",
+        "category": "blocking",
+    },
+    "blocking_globalblock": {
+        "name": "GlobalBlock — Multi-Registry Domain Blocking Service",
+        "url": "https://www.globalblock.com/",
+        "category": "blocking",
+    },
+    "icann_rpm_review": {
+        "name": "ICANN GNSO Rights Protection Mechanisms (RPM) Review",
+        "url": "https://gnso.icann.org/en/group-activities/active/rpm",
+        "category": "blocking",
+    },
+    "radix_brand_protection": {
+        "name": "Radix — Domain Brand Protection Services",
+        "url": "https://radix.website/brand-protection",
+        "category": "blocking",
+    },
+}
+
+# =============================================================================
+# DNS Monitoring & Observability
+# =============================================================================
+MONITORING_SOURCES = {
+    "thousandeyes_dns": {
+        "name": "ThousandEyes (Cisco) — DNS Server Monitoring",
+        "url": "https://www.thousandeyes.com/product/dns-server-monitoring",
+        "category": "monitoring",
+    },
+    "catchpoint_dns": {
+        "name": "Catchpoint — DNS Monitoring",
+        "url": "https://www.catchpoint.com/dns-monitoring",
+        "category": "monitoring",
+    },
+    "dnscheck_co": {
+        "name": "DNSCheck.co — DNS Health Check Tool",
+        "url": "https://dnscheck.co/",
+        "category": "monitoring",
+    },
+    "viewdns_info": {
+        "name": "ViewDNS.info — DNS Lookup and Monitoring Tools",
+        "url": "https://viewdns.info/",
+        "category": "monitoring",
+    },
+    "securitytrails": {
+        "name": "SecurityTrails — DNS and Domain Intelligence",
+        "url": "https://securitytrails.com/",
+        "category": "monitoring",
+    },
+    "riskiq_passive_dns": {
+        "name": "RiskIQ (Microsoft) — Passive DNS and Threat Intelligence",
+        "url": "https://community.riskiq.com/",
+        "category": "monitoring",
+    },
+    "rapid7_project_sonar": {
+        "name": "Rapid7 Project Sonar — Internet-Wide DNS Scanning",
+        "url": "https://www.rapid7.com/research/project-sonar/",
+        "category": "monitoring",
     },
 }
 
@@ -405,6 +624,10 @@ def _all_industry_sources() -> dict:
         **PROTECTIVE_DNS_SOURCES,
         **THREAT_INTEL_SOURCES,
         **INDUSTRY_BUSINESS_SOURCES,
+        **BRAND_PROTECTION_SOURCES,
+        **AFTERMARKET_SOURCES,
+        **BLOCKING_SOURCES,
+        **MONITORING_SOURCES,
         **RETAIL_REGISTRAR_SOURCES,
         **CORPORATE_REGISTRAR_SOURCES,
     }
