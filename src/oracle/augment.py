@@ -74,14 +74,38 @@ async def paraphrase_questions(
 
         try:
             response_text = await _call_llm(client, provider, model, prompt)
-            text = response_text.strip()
-            if text.startswith("```"):
-                text = text.split("\n", 1)[1]
-                if text.endswith("```"):
-                    text = text[: text.rfind("```")]
-            paraphrases = json.loads(text)
 
-            if not isinstance(paraphrases, list):
+            from oracle.json_repair import parse_llm_json
+
+            parsed = parse_llm_json(response_text)
+            if parsed is None:
+                logger.warning("Failed to parse paraphrase response for %s", example.id)
+                continue
+
+            # parse_llm_json returns list[dict], but paraphrases should be list[str]
+            # Handle both: raw string array or array of objects
+            paraphrases: list[str] = []
+            for item in parsed:
+                if isinstance(item, str):
+                    paraphrases.append(item)
+                elif isinstance(item, dict):
+                    # Try to extract a string value
+                    val = item.get("paraphrase", item.get("question", ""))
+                    if val:
+                        paraphrases.append(str(val))
+
+            if not paraphrases:
+                # Fallback: the response might be a plain JSON array of strings
+                # that parse_llm_json wrapped in dicts
+                try:
+                    from oracle.json_repair import _strip_fences
+                    raw = json.loads(_strip_fences(response_text.strip()))
+                    if isinstance(raw, list) and all(isinstance(x, str) for x in raw):
+                        paraphrases = raw
+                except (json.JSONDecodeError, ValueError):
+                    pass
+
+            if not paraphrases:
                 continue
 
             for i, para in enumerate(paraphrases[:paraphrases_per_example]):

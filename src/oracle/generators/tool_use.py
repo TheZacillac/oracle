@@ -212,20 +212,13 @@ class ToolUseGenerator(BaseGenerator):
 
         raw_response = await self._call_llm(prompt)
 
-        # Parse LLM response
-        try:
-            text = raw_response.strip()
-            if text.startswith("```"):
-                text = text.split("\n", 1)[1]
-                if text.endswith("```"):
-                    text = text[: text.rfind("```")]
-            raw_examples = json.loads(text)
-        except json.JSONDecodeError:
-            logger.error("Failed to parse tool-use LLM response:\n%s", raw_response[:500])
-            return []
+        # Parse LLM response with repair strategies
+        from oracle.json_repair import parse_llm_json
 
-        if not isinstance(raw_examples, list):
-            raw_examples = [raw_examples]
+        raw_examples = parse_llm_json(raw_response)
+        if raw_examples is None:
+            logger.error("Failed to parse tool-use LLM response (all repair strategies failed):\n%s", raw_response[:500])
+            return []
 
         # Convert to TrainingExample records
         examples: list[TrainingExample] = []
