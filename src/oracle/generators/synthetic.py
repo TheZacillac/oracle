@@ -295,55 +295,83 @@ class SyntheticGenerator(BaseGenerator):
                 )
                 examples.append(example)
             except Exception as e:
-                logger.warning("Skipping invalid example %d: %s", i, e)
+                keys = list(raw.keys()) if isinstance(raw, dict) else type(raw).__name__
+                logger.warning("Skipping invalid example %d (keys=%s): %s", i, keys, e)
                 continue
 
         logger.info("Generated %d valid examples (requested %d)", len(examples), count)
         return examples
+
+    @staticmethod
+    def _get_key(raw: dict, *candidates: str) -> str:
+        """Get a value by trying multiple key names.
+
+        LLMs don't always use the exact key names from the prompt.
+        Common variations: question/prompt/query/input, answer/response/output.
+        """
+        for key in candidates:
+            if key in raw and raw[key]:
+                return raw[key]
+        # If nothing found, log what keys ARE present and raise
+        available = list(raw.keys())
+        raise KeyError(
+            f"None of {list(candidates)} found in response. "
+            f"Available keys: {available}"
+        )
 
     def _build_messages(self, raw: dict, format_type: ExampleFormat) -> list[Message]:
         """Build message list from raw LLM output based on format type."""
         messages = [Message(role=MessageRole.SYSTEM, content=self.system_prompt)]
 
         if format_type == ExampleFormat.INSTRUCTION:
-            messages.append(Message(role=MessageRole.USER, content=raw["question"]))
+            question = self._get_key(raw, "question", "prompt", "query", "input", "user", "user_question")
+            answer = self._get_key(raw, "answer", "response", "output", "assistant", "assistant_response")
+            messages.append(Message(role=MessageRole.USER, content=question))
             messages.append(Message(
                 role=MessageRole.ASSISTANT,
-                content=raw["answer"],
+                content=answer,
                 thinking=raw.get("thinking"),
             ))
 
         elif format_type == ExampleFormat.MULTI_TURN:
-            turns = raw.get("turns", [])
+            turns = raw.get("turns", raw.get("conversation", []))
             if not turns:
-                messages.append(Message(role=MessageRole.USER, content=raw.get("question", "")))
+                question = self._get_key(raw, "question", "prompt", "query", "input", "user")
+                answer = self._get_key(raw, "answer", "response", "output", "assistant")
+                messages.append(Message(role=MessageRole.USER, content=question))
                 messages.append(Message(
                     role=MessageRole.ASSISTANT,
-                    content=raw.get("answer", ""),
+                    content=answer,
                     thinking=raw.get("thinking"),
                 ))
             else:
                 for turn in turns:
-                    messages.append(Message(role=MessageRole.USER, content=turn["user"]))
+                    user_msg = self._get_key(turn, "user", "question", "prompt", "input")
+                    asst_msg = self._get_key(turn, "assistant", "answer", "response", "output")
+                    messages.append(Message(role=MessageRole.USER, content=user_msg))
                     messages.append(Message(
                         role=MessageRole.ASSISTANT,
-                        content=turn["assistant"],
+                        content=asst_msg,
                         thinking=turn.get("thinking"),
                     ))
 
         elif format_type == ExampleFormat.SCENARIO:
-            messages.append(Message(role=MessageRole.USER, content=raw["scenario"]))
+            scenario = self._get_key(raw, "scenario", "situation", "problem", "question", "user")
+            analysis = self._get_key(raw, "analysis", "answer", "response", "solution", "assistant")
+            messages.append(Message(role=MessageRole.USER, content=scenario))
             messages.append(Message(
                 role=MessageRole.ASSISTANT,
-                content=raw["analysis"],
+                content=analysis,
                 thinking=raw.get("thinking"),
             ))
 
         else:
-            messages.append(Message(role=MessageRole.USER, content=raw.get("question", "")))
+            question = self._get_key(raw, "question", "prompt", "query", "input", "user")
+            answer = self._get_key(raw, "answer", "response", "output", "assistant")
+            messages.append(Message(role=MessageRole.USER, content=question))
             messages.append(Message(
                 role=MessageRole.ASSISTANT,
-                content=raw.get("answer", ""),
+                content=answer,
                 thinking=raw.get("thinking"),
             ))
 
