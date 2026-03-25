@@ -81,8 +81,8 @@ RESOLVER_DNS_SOURCES = {
         "category": "dns_software",
     },
     "unbound_dnssec": {
-        "name": "Unbound DNSSEC Validation Guide",
-        "url": "https://unbound.docs.nlnetlabs.nl/en/latest/topics/core/dnssec.html",
+        "name": "Unbound Configuration and DNSSEC Setup Guide",
+        "url": "https://unbound.docs.nlnetlabs.nl/en/latest/getting-started/configuration.html",
         "category": "dns_software",
     },
     # CoreDNS
@@ -249,13 +249,13 @@ DNS_DEBUG_SOURCES = {
         "category": "dns_tools",
     },
     "drill_man": {
-        "name": "drill — DNS Query Tool (NLnet Labs ldns)",
-        "url": "https://www.nlnetlabs.nl/documentation/ldns/drill.1.html",
+        "name": "drill — DNS Query Tool (Debian Man Page)",
+        "url": "https://manpages.debian.org/testing/ldnsutils/drill.1.en.html",
         "category": "dns_tools",
     },
     "dog_dns": {
-        "name": "dog — Command-Line DNS Client (Modern dig Alternative)",
-        "url": "https://dns.lookup.dog/",
+        "name": "dog — Command-Line DNS Client (GitHub)",
+        "url": "https://github.com/ogham/dog",
         "category": "dns_tools",
     },
     "doggo": {

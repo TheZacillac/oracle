@@ -32,18 +32,18 @@ M3AAWG_SOURCES = {
         "category": "email",
     },
     "m3aawg_sending_practices": {
-        "name": "M3AAWG Sender Best Practices",
-        "url": "https://www.m3aawg.org/documents/en/m3aawg-sender-best-communications-practices-version-40",
+        "name": "M3AAWG Sender Best Practices (Version 3.0)",
+        "url": "https://www.m3aawg.org/documents/en/m3aawg-sender-best-common-practices-version-30",
         "category": "email",
     },
     "m3aawg_phishing": {
-        "name": "M3AAWG Anti-Phishing Best Practices",
-        "url": "https://www.m3aawg.org/documents/en/anti-phishing-best-practices",
+        "name": "M3AAWG Anti-Phishing and Published Documents",
+        "url": "https://www.m3aawg.org/published-documents",
         "category": "dns_abuse",
     },
     "m3aawg_dns_practices": {
-        "name": "M3AAWG DNS Best Practices for ISPs and Hosting Providers",
-        "url": "https://www.m3aawg.org/dns-best-practices",
+        "name": "M3AAWG DNS Abuse Prevention for Registrars and Registries (2024)",
+        "url": "https://www.m3aawg.org/DNSAbusePreventionRegReg2024",
         "category": "dns",
     },
 }
@@ -56,13 +56,13 @@ APWG_SOURCES = {
         "category": "dns_abuse",
     },
     "apwg_ecrime": {
-        "name": "APWG eCrime Research Resources",
-        "url": "https://apwg.org/ecrime-research/",
+        "name": "APWG/eCrime Research Papers",
+        "url": "https://ecrimeresearch.org/ecrime-research-papers/",
         "category": "dns_abuse",
     },
     "apwg_unifying_framework": {
-        "name": "APWG/M3AAWG Best Practices for Domain Abuse Prevention",
-        "url": "https://apwg.org/best-practices/",
+        "name": "APWG (Anti-Phishing Working Group) Resources",
+        "url": "https://apwg.org/",
         "category": "dns_abuse",
     },
 }
@@ -76,12 +76,12 @@ DNS_OARC_SOURCES = {
     },
     "dns_oarc_tools": {
         "name": "DNS-OARC Tools and Data",
-        "url": "https://www.dns-oarc.net/tools",
+        "url": "https://www.dns-oarc.net/oarc/tools",
         "category": "dns_tools",
     },
     "dns_flag_day": {
-        "name": "DNS Flag Day Events and Requirements",
-        "url": "https://dnsflagday.net/",
+        "name": "DNS Flag Day Events and Requirements (GitHub Mirror)",
+        "url": "https://dns-violations.github.io/dnsflagday/",
         "category": "dns",
     },
     "ditl_data": {
@@ -94,8 +94,8 @@ DNS_OARC_SOURCES = {
 FIRST_SOURCES = {
     # FIRST (Forum of Incident Response and Security Teams)
     "first_dns_abuse": {
-        "name": "FIRST DNS Abuse Handling Guide",
-        "url": "https://www.first.org/resources/guides/dns-abuse",
+        "name": "FIRST DNS Abuse Special Interest Group",
+        "url": "https://www.first.org/global/sigs/dns/",
         "category": "domain_security",
     },
     "first_incident_response": {
@@ -111,25 +111,19 @@ FIRST_SOURCES = {
 REGISTRY_REGISTRAR_ORGS = {
     # CENTR (Council of European National TLD Registries)
     "centr_overview": {
-        "name": "CENTR Resources and Publications",
-        "url": "https://www.centr.org/resources/",
+        "name": "CENTR Library and Publications",
+        "url": "https://centr.org/library/library.html",
         "category": "tlds",
     },
     "centr_stats": {
-        "name": "CENTR Domain Statistics and Reports",
-        "url": "https://www.centr.org/statistics/",
-        "category": "tlds",
-    },
-    # APTLD (Asia Pacific TLD Association)
-    "aptld_overview": {
-        "name": "APTLD Resources",
-        "url": "https://www.aptld.org/resources/",
+        "name": "CENTRstats — Domain Statistics Analytics",
+        "url": "https://stats.centr.org/",
         "category": "tlds",
     },
     # LACTLD (Latin American and Caribbean TLD Association)
     "lactld_overview": {
         "name": "LACTLD Resources",
-        "url": "https://www.lactld.org/en/resources/",
+        "url": "https://lactld.org/en/",
         "category": "tlds",
     },
     # AFTLD (African TLD Organization)
@@ -137,18 +131,6 @@ REGISTRY_REGISTRAR_ORGS = {
         "name": "AFTLD Resources",
         "url": "https://aftld.org/",
         "category": "tlds",
-    },
-    # Domain Name Association
-    "dna_overview": {
-        "name": "Domain Name Association Resources",
-        "url": "https://thedna.org/resources/",
-        "category": "aftermarket",
-    },
-    # i2Coalition
-    "i2coalition": {
-        "name": "i2Coalition (Internet Infrastructure Coalition)",
-        "url": "https://www.i2coalition.com/resources/",
-        "category": "hosting",
     },
 }
 
@@ -208,8 +190,8 @@ PROTECTIVE_DNS_SOURCES = {
         "category": "protective_dns",
     },
     "cisa_protective_dns": {
-        "name": "CISA Protective DNS Service",
-        "url": "https://www.cisa.gov/protective-dns",
+        "name": "CISA Protective DNS Resolver Service",
+        "url": "https://www.cisa.gov/resources-tools/services/protective-domain-name-system-dns-resolver",
         "category": "protective_dns",
     },
     "opendns": {
@@ -239,8 +221,8 @@ PROTECTIVE_DNS_SOURCES = {
 # =============================================================================
 THREAT_INTEL_SOURCES = {
     "spamhaus": {
-        "name": "Spamhaus — DNS Blocklists and Reputation Data",
-        "url": "https://www.spamhaus.org/resource-center/",
+        "name": "Spamhaus Resource Hub — DNS Blocklists and Reputation Data",
+        "url": "https://www.spamhaus.org/resource-hub/",
         "category": "dns_abuse",
     },
     "spamhaus_dbl": {
@@ -259,8 +241,8 @@ THREAT_INTEL_SOURCES = {
         "category": "monitoring",
     },
     "passive_dns_info": {
-        "name": "Passive DNS Information (Community Resources)",
-        "url": "https://www.enisa.europa.eu/topics/incident-response/glossary/passive-dns",
+        "name": "ENISA — Security and Privacy for Public DNS Resolvers",
+        "url": "https://www.enisa.europa.eu/publications/security-and-privacy-for-public-dns-resolvers",
         "category": "monitoring",
     },
     "phishtank": {
@@ -279,14 +261,9 @@ THREAT_INTEL_SOURCES = {
 # Domain Industry & Business
 # =============================================================================
 INDUSTRY_BUSINESS_SOURCES = {
-    "ntldstats": {
-        "name": "nTLDStats — New gTLD Statistics and Analysis",
-        "url": "https://ntldstats.com/",
-        "category": "industry",
-    },
     "domaintools_research": {
-        "name": "DomainTools Research",
-        "url": "https://www.domaintools.com/resources/",
+        "name": "DomainTools Investigations — Threat Intelligence Research",
+        "url": "https://dti.domaintools.com/",
         "category": "industry",
     },
     "verisign_domain_brief": {

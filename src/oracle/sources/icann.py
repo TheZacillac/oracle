@@ -50,7 +50,7 @@ ICANN_SOURCES = {
     },
     "registry_data_escrow": {
         "name": "Registry Data Escrow Requirements",
-        "url": "https://www.icann.org/resources/pages/registry-data-escrow-2017-01-10-en",
+        "url": "https://www.icann.org/en/contracted-parties/registry-operators/services/data-escrow",
         "category": "tlds",
     },
     "rsep": {
@@ -67,7 +67,7 @@ ICANN_SOURCES = {
     },
     "agp_limits": {
         "name": "Add Grace Period (AGP) Limits Policy",
-        "url": "https://www.icann.org/resources/pages/agp-policy-2013-02-01-en",
+        "url": "https://www.icann.org/en/contracted-parties/consensus-policies/add-grace-period-limits-policy/agp-add-grace-period-limits-policy-17-12-2008-en",
         "category": "registration",
     },
     "errp": {
@@ -77,7 +77,7 @@ ICANN_SOURCES = {
     },
     "thick_whois_policy": {
         "name": "Thick WHOIS Transition Policy for .COM, .NET, .JOBS",
-        "url": "https://www.icann.org/resources/pages/thick-whois-2017-02-22-en",
+        "url": "https://www.icann.org/en/contracted-parties/consensus-policies/thick-registry-registration-data-directory-services-transition-policy/thick-whois-transition-policy-for-com-net-and-jobs-01-02-2017-en",
         "category": "registration",
     },
 
@@ -95,11 +95,6 @@ ICANN_SOURCES = {
     "new_gtld_stats": {
         "name": "New gTLD Program Statistics",
         "url": "https://newgtlds.icann.org/en/program-status/statistics",
-        "category": "tlds",
-    },
-    "string_similarity": {
-        "name": "String Similarity Review Guidelines",
-        "url": "https://newgtlds.icann.org/en/applicants/string-similarity",
         "category": "tlds",
     },
 
@@ -126,12 +121,7 @@ ICANN_SOURCES = {
     },
     "pddrp": {
         "name": "Post-Delegation Dispute Resolution Procedure (PDDRP)",
-        "url": "https://www.icann.org/resources/pages/pddrp-2013-02-05-en",
-        "category": "disputes",
-    },
-    "rrdrp": {
-        "name": "Registry Restriction Dispute Resolution Procedure (RRDRP)",
-        "url": "https://newgtlds.icann.org/en/applicants/rrdrp",
+        "url": "https://www.icann.org/en/contracted-parties/registry-operators/services/rights-protection-mechanisms-and-dispute-resolution-procedures/pddrp",
         "category": "disputes",
     },
 
@@ -143,17 +133,17 @@ ICANN_SOURCES = {
     },
     "epdp_phase2": {
         "name": "EPDP Phase 2 Final Report (SSAD)",
-        "url": "https://gnso.icann.org/en/group-activities/active/epdp-phase-2",
+        "url": "https://gnso.icann.org/en/group-activities/active/gtld-registration-data-epdp-phase-2",
         "category": "whois_rdap",
     },
     "epdp_phase2a": {
         "name": "EPDP Phase 2A Final Report (Legal vs Natural Persons)",
-        "url": "https://gnso.icann.org/en/group-activities/active/epdp-phase-2a",
+        "url": "https://gnso.icann.org/en/group-activities/active/gtld-registration-data-epdp-phase-2a",
         "category": "whois_rdap",
     },
     "wdrp": {
-        "name": "WHOIS Data Reminder Policy",
-        "url": "https://www.icann.org/resources/pages/wdrp-2013-07-15-en",
+        "name": "Registration Data Reminder Policy",
+        "url": "https://www.icann.org/en/contracted-parties/consensus-policies/registration-data-reminder-policy/registration-data-reminder-policy-21-02-2024-en",
         "category": "whois_rdap",
     },
     "registration_data_request_service": {
@@ -192,12 +182,12 @@ ICANN_SOURCES = {
     },
     "icann_strategic_plan": {
         "name": "ICANN Strategic Plan",
-        "url": "https://www.icann.org/resources/pages/strategic-plan-2019-2023",
+        "url": "https://www.icann.org/strategic-plan-en",
         "category": "icann",
     },
     "irp_procedures": {
         "name": "Independent Review Process (IRP) Procedures",
-        "url": "https://www.icann.org/resources/pages/irp-en",
+        "url": "https://www.icann.org/resources/pages/accountability/irp-en",
         "category": "icann",
     },
     "icann_reconsideration": {
@@ -217,7 +207,7 @@ ICANN_SOURCES = {
     },
     "ccnso_framework": {
         "name": "ccNSO Framework of Interpretation",
-        "url": "https://ccnso.icann.org/en/about/framework.htm",
+        "url": "https://www.icann.org/en/ccnso/committees-and-working-groups/documents/framework-of-interpretation-working-group-13-06-2011-en",
         "category": "icann",
     },
     "pti_iana_functions": {
@@ -232,7 +222,7 @@ ICANN_SOURCES = {
     },
     "icann_annual_report": {
         "name": "ICANN Annual Report",
-        "url": "https://www.icann.org/resources/pages/annual-report-2023",
+        "url": "https://www.icann.org/resources/pages/governance/annual-report-en",
         "category": "icann",
     },
     "icann_fellowship": {
@@ -282,8 +272,8 @@ ICANN_SOURCES = {
         "category": "compliance",
     },
     "dns4eu": {
-        "name": "DNS4EU Initiative",
-        "url": "https://www.dns4eu.eu/",
+        "name": "DNS4EU Initiative (JoinDNS4EU)",
+        "url": "https://joindns4.eu/",
         "category": "compliance",
     },
     "gdpr_full_text": {
@@ -299,18 +289,13 @@ ICANN_SOURCES = {
 
     # ---- Domain Security ----
     "icann_domain_abuse_guide": {
-        "name": "ICANN Contractual Compliance Domain Abuse Guide",
-        "url": "https://www.icann.org/resources/pages/domain-abuse-activity-reporting",
+        "name": "ICANN DNS Abuse Mitigation Program",
+        "url": "https://www.icann.org/dnsabuse",
         "category": "domain_security",
     },
     "registrar_security_best_practices": {
         "name": "ICANN Registrar Security Best Practices",
         "url": "https://www.icann.org/resources/pages/security-2012-02-25-en",
-        "category": "domain_security",
-    },
-    "registry_lock_info": {
-        "name": "Registry Lock Service Information",
-        "url": "https://www.icann.org/resources/pages/registry-locks",
         "category": "domain_security",
     },
 
@@ -321,8 +306,8 @@ ICANN_SOURCES = {
         "category": "internationalization",
     },
     "ua_technical_usage": {
-        "name": "UASG Technical Resources",
-        "url": "https://uasg.tech/technical-resources/",
+        "name": "UASG Document Hub (Archived)",
+        "url": "https://uasg.tech/document-hub/",
         "category": "internationalization",
     },
     "ua_eai_overview": {
@@ -396,8 +381,8 @@ WIPO_SOURCES = {
         "category": "disputes",
     },
     "wipo_urs_rules": {
-        "name": "WIPO URS Supplemental Rules",
-        "url": "https://www.wipo.int/amc/en/domains/rules/urs/",
+        "name": "WIPO Rights Protection Mechanisms for New TLDs",
+        "url": "https://www.wipo.int/amc/en/domains/rpm/",
         "category": "disputes",
     },
     # ---- WIPO Legal Resources ----
@@ -409,11 +394,6 @@ WIPO_SOURCES = {
     "wipo_cctld_policies": {
         "name": "WIPO ccTLD Dispute Resolution Policies Database",
         "url": "https://www.wipo.int/amc/en/domains/cctld/",
-        "category": "disputes",
-    },
-    "wipo_timeline": {
-        "name": "WIPO Domain Name Dispute Resolution Timeline",
-        "url": "https://www.wipo.int/amc/en/domains/resources/timeline/",
         "category": "disputes",
     },
 }

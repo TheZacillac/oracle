@@ -37,7 +37,7 @@ CABFORUM_SOURCES = {
     },
     "code_signing_requirements": {
         "name": "CA/Browser Forum Code Signing Baseline Requirements",
-        "url": "https://cabforum.org/code-signing-certificate-requirements/",
+        "url": "https://cabforum.org/working-groups/code-signing/requirements/",
         "category": "ssl",
     },
     "smime_requirements": {
@@ -80,8 +80,8 @@ CABFORUM_SOURCES = {
         "category": "ssl",
     },
     "mozilla_root_store": {
-        "name": "Mozilla Root Store — Included CA Certificates",
-        "url": "https://ccadb-public.secure.force.com/mozilla/IncludedCACertificateReport",
+        "name": "Mozilla Root Store — Included CA Certificate Report (CCADB)",
+        "url": "https://ccadb.my.salesforce-sites.com/mozilla/IncludedCACertificateReport",
         "category": "ssl",
     },
     "google_root_store": {

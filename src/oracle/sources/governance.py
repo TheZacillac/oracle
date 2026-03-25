@@ -76,13 +76,8 @@ GOVERNANCE_FORUM_SOURCES = {
         "category": "governance",
     },
     "igf_messages": {
-        "name": "IGF Annual Messages and Output Documents",
-        "url": "https://www.intgovforum.org/en/content/igf-outputs",
-        "category": "governance",
-    },
-    "igf_bpf_cybersecurity": {
-        "name": "IGF Best Practice Forum on Cybersecurity",
-        "url": "https://www.intgovforum.org/en/content/bpf-cybersecurity",
+        "name": "IGF 2025 Output Documents",
+        "url": "https://www.intgovforum.org/en/content/igf-2025-outputs",
         "category": "governance",
     },
     "netmundial": {
@@ -148,7 +143,7 @@ RIR_SOURCES = {
     },
     "lacnic": {
         "name": "LACNIC (Latin America and Caribbean Network Information Centre)",
-        "url": "https://www.lacnic.net/en/web/lacnic/about-lacnic",
+        "url": "https://www.lacnic.net/1004/2/lacnic/about-lacnic",
         "category": "governance",
     },
     "afrinic": {
@@ -163,8 +158,8 @@ RIR_SOURCES = {
 # =============================================================================
 CYBERSECURITY_AGENCY_SOURCES = {
     "ncsc_dns_guidance": {
-        "name": "UK NCSC — DNS Security Guidance",
-        "url": "https://www.ncsc.gov.uk/collection/dns",
+        "name": "UK NCSC — Good Security Practice for Domain Registrars",
+        "url": "https://www.ncsc.gov.uk/collection/security-practice-domain-registrars",
         "category": "domain_security",
     },
     "ncsc_pdns": {
@@ -173,18 +168,18 @@ CYBERSECURITY_AGENCY_SOURCES = {
         "category": "protective_dns",
     },
     "cisa_dns": {
-        "name": "CISA DNS Infrastructure Guidance",
-        "url": "https://www.cisa.gov/dns-infrastructure",
+        "name": "CISA — Mitigate DNS Infrastructure Tampering",
+        "url": "https://www.cisa.gov/resources-tools/resources/mitigate-dns-infrastructure-tampering",
         "category": "domain_security",
     },
     "enisa_dns": {
-        "name": "ENISA (EU Agency for Cybersecurity) — DNS Best Practices",
-        "url": "https://www.enisa.europa.eu/topics/dns",
+        "name": "ENISA — Security and Privacy for Public DNS Resolvers",
+        "url": "https://www.enisa.europa.eu/publications/security-and-privacy-for-public-dns-resolvers",
         "category": "domain_security",
     },
     "bsi_dns": {
-        "name": "BSI (German Federal Cyber Security Authority) — DNS Security",
-        "url": "https://www.bsi.bund.de/EN/Topics/IT-Crisis-Management/DNS/dns_node.html",
+        "name": "BSI — DNS and ISP Security Recommendations",
+        "url": "https://www.bsi.bund.de/EN/Themen/Regulierte-Wirtschaft/Weitere_regulierte_Unternehmen/Internet_Service_Provider/Internet-Service-Provider_node.html",
         "category": "domain_security",
     },
 }

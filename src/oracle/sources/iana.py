@@ -24,7 +24,7 @@ IANA_URLS = {
     "root_hints": "https://www.internic.net/domain/named.root",
     "trust_anchors": "https://data.iana.org/root-anchors/root-anchors.xml",
     "special_use_domains": "https://www.iana.org/assignments/special-use-domain-names/special-use-domain-names.xhtml",
-    "special_use_csv": "https://www.iana.org/assignments/special-use-domain-names/special-use-domain-names-1.csv",
+    "special_use_csv": "https://www.iana.org/assignments/special-use-domain-names/special-use-domain.csv",
 
     # ---- DNS Parameters ----
     "dns_parameters": "https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml",
