@@ -235,6 +235,104 @@ CLOUD_DNS_SOURCES = {
 }
 
 # =============================================================================
+# DNS Hosting Provider Documentation (for dns_providers taxonomy)
+# =============================================================================
+DNS_PROVIDER_SOURCES = {
+    # ---- Provider-specific docs ----
+    "cloudflare_dns_overview": {
+        "name": "Cloudflare DNS — How Cloudflare DNS Works",
+        "url": "https://developers.cloudflare.com/dns/concepts/",
+        "category": "dns_providers",
+    },
+    "cloudflare_cname_flattening": {
+        "name": "Cloudflare CNAME Flattening",
+        "url": "https://developers.cloudflare.com/dns/cname-flattening/",
+        "category": "dns_providers",
+    },
+    "route53_routing_policies": {
+        "name": "Amazon Route 53 Routing Policies",
+        "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html",
+        "category": "dns_providers",
+    },
+    "route53_pricing": {
+        "name": "Amazon Route 53 Pricing",
+        "url": "https://aws.amazon.com/route53/pricing/",
+        "category": "dns_providers",
+    },
+    "gcp_cloud_dns_overview": {
+        "name": "Google Cloud DNS Overview and Concepts",
+        "url": "https://cloud.google.com/dns/docs/overview",
+        "category": "dns_providers",
+    },
+    "azure_dns_overview": {
+        "name": "Azure DNS Overview",
+        "url": "https://learn.microsoft.com/en-us/azure/dns/dns-overview",
+        "category": "dns_providers",
+    },
+    "azure_traffic_manager": {
+        "name": "Azure Traffic Manager Documentation",
+        "url": "https://learn.microsoft.com/en-us/azure/traffic-manager/",
+        "category": "dns_providers",
+    },
+    "ns1_filter_chains": {
+        "name": "NS1 Filter Chains — Advanced DNS Traffic Steering",
+        "url": "https://www.ibm.com/products/ns1-connect",
+        "category": "dns_providers",
+    },
+    "akamai_edgedns_overview": {
+        "name": "Akamai Edge DNS Product Overview",
+        "url": "https://www.akamai.com/products/edge-dns",
+        "category": "dns_providers",
+    },
+    "ultradns_overview": {
+        "name": "UltraDNS (Vercara) Product Overview",
+        "url": "https://www.vercara.com/ultradns",
+        "category": "dns_providers",
+    },
+    "dnsimple_api": {
+        "name": "DNSimple API Documentation",
+        "url": "https://developer.dnsimple.com/",
+        "category": "dns_providers",
+    },
+    "dns_made_easy": {
+        "name": "DNS Made Easy Documentation",
+        "url": "https://dnsmadeeasy.com/technology",
+        "category": "dns_providers",
+    },
+    "he_dns": {
+        "name": "Hurricane Electric Free DNS Hosting",
+        "url": "https://dns.he.net/",
+        "category": "dns_providers",
+    },
+    "constellix_docs": {
+        "name": "Constellix DNS Documentation",
+        "url": "https://constellix.com/docs/",
+        "category": "dns_providers",
+    },
+    "bunny_dns": {
+        "name": "Bunny DNS Documentation",
+        "url": "https://docs.bunny.net/docs/dns-overview",
+        "category": "dns_providers",
+    },
+    "porkbun_dns": {
+        "name": "Porkbun DNS Management and API",
+        "url": "https://porkbun.com/api/json/v3/documentation",
+        "category": "dns_providers",
+    },
+    # ---- Comparison and evaluation resources ----
+    "dnsperf_rankings": {
+        "name": "DNSPerf — DNS Provider Performance Rankings",
+        "url": "https://www.dnsperf.com/",
+        "category": "dns_providers",
+    },
+    "cdnperf_dns": {
+        "name": "CDNPerf DNS Performance Monitor",
+        "url": "https://www.cdnperf.com/dns-providers",
+        "category": "dns_providers",
+    },
+}
+
+# =============================================================================
 # DNS Debugging Tools Documentation
 # =============================================================================
 DNS_DEBUG_SOURCES = {
@@ -294,6 +392,7 @@ def _all_dns_software_sources() -> dict:
         **DNSSEC_TOOL_SOURCES,
         **DNS_AUTOMATION_SOURCES,
         **CLOUD_DNS_SOURCES,
+        **DNS_PROVIDER_SOURCES,
         **DNS_DEBUG_SOURCES,
     }
 

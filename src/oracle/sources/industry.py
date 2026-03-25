@@ -283,6 +283,115 @@ INDUSTRY_BUSINESS_SOURCES = {
     },
 }
 
+# =============================================================================
+# Registrar Sources (Retail & Corporate)
+# =============================================================================
+RETAIL_REGISTRAR_SOURCES = {
+    "godaddy_about": {
+        "name": "GoDaddy — About and Investor Relations",
+        "url": "https://aboutus.godaddy.net/",
+        "category": "registrars",
+    },
+    "godaddy_api": {
+        "name": "GoDaddy Developer API Documentation",
+        "url": "https://developer.godaddy.com/",
+        "category": "registrars",
+    },
+    "namecheap_kb": {
+        "name": "Namecheap Knowledge Base",
+        "url": "https://www.namecheap.com/support/knowledgebase/",
+        "category": "registrars",
+    },
+    "namecheap_api": {
+        "name": "Namecheap API Documentation",
+        "url": "https://www.namecheap.com/support/api/intro/",
+        "category": "registrars",
+    },
+    "porkbun_about": {
+        "name": "Porkbun — About and Features",
+        "url": "https://porkbun.com/about",
+        "category": "registrars",
+    },
+    "tucows_opensrs": {
+        "name": "OpenSRS (Tucows) — Reseller Platform Documentation",
+        "url": "https://opensrs.com/resources/documentation/",
+        "category": "registrars",
+    },
+    "gandi_docs": {
+        "name": "Gandi Documentation",
+        "url": "https://docs.gandi.net/en/",
+        "category": "registrars",
+    },
+    "squarespace_domains": {
+        "name": "Squarespace Domains Help (formerly Google Domains)",
+        "url": "https://support.squarespace.com/hc/en-us/categories/205815928-Domains",
+        "category": "registrars",
+    },
+    "dynadot_api": {
+        "name": "Dynadot API Documentation",
+        "url": "https://www.dynadot.com/domain/api3.html",
+        "category": "registrars",
+    },
+    "ionos_domains": {
+        "name": "IONOS Domain Management Help",
+        "url": "https://www.ionos.com/help/domains/",
+        "category": "registrars",
+    },
+}
+
+CORPORATE_REGISTRAR_SOURCES = {
+    "markmonitor": {
+        "name": "MarkMonitor (Clarivate) — Domain Management Solutions",
+        "url": "https://clarivate.com/products/ip-intelligence/trademark-research-and-protection/markmonitor-domain-management/",
+        "category": "registrars",
+    },
+    "csc_dbs": {
+        "name": "CSC Digital Brand Services — Domain Security",
+        "url": "https://www.cscdbs.com/",
+        "category": "registrars",
+    },
+    "csc_domain_security": {
+        "name": "CSC Domain Security Intelligence",
+        "url": "https://www.cscdbs.com/domain-security/",
+        "category": "registrars",
+    },
+    "comlaude": {
+        "name": "Com Laude — Corporate Domain Management",
+        "url": "https://comlaude.com/",
+        "category": "registrars",
+    },
+    "safenames": {
+        "name": "Safenames — Domain and Brand Protection Services",
+        "url": "https://www.safenames.net/",
+        "category": "registrars",
+    },
+    "brandit": {
+        "name": "BRANDIT — Domain and Brand Management",
+        "url": "https://www.brandit.com/",
+        "category": "registrars",
+    },
+    "brandshelter": {
+        "name": "BrandShelter — Corporate Domain Protection",
+        "url": "https://www.brandshelter.com/",
+        "category": "registrars",
+    },
+    "centralnic_registrar": {
+        "name": "CentralNic — Registry and Registrar Platform",
+        "url": "https://www.centralnic.com/",
+        "category": "registrars",
+    },
+    "identity_digital": {
+        "name": "Identity Digital (formerly Donuts/Afilias) — Registry and Registrar Services",
+        "url": "https://www.identity.digital/",
+        "category": "registrars",
+    },
+    "realtime_register": {
+        "name": "RealTime Register — Wholesale Domain Platform",
+        "url": "https://www.realtimeregister.com/en",
+        "category": "registrars",
+    },
+}
+
 
 def _all_industry_sources() -> dict:
     """Combine all industry source dictionaries."""
@@ -296,6 +405,8 @@ def _all_industry_sources() -> dict:
         **PROTECTIVE_DNS_SOURCES,
         **THREAT_INTEL_SOURCES,
         **INDUSTRY_BUSINESS_SOURCES,
+        **RETAIL_REGISTRAR_SOURCES,
+        **CORPORATE_REGISTRAR_SOURCES,
     }
 
 
