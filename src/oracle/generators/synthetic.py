@@ -219,14 +219,14 @@ class SyntheticGenerator(BaseGenerator):
         if self.provider == "anthropic":
             response = await client.messages.create(
                 model=self.model,
-                max_tokens=4096,
+                max_tokens=8192,
                 messages=[{"role": "user", "content": prompt}],
             )
             return response.content[0].text
         elif self.provider in ("openai", "ollama"):
             response = await client.chat.completions.create(
                 model=self.model,
-                max_tokens=4096,
+                max_tokens=8192,
                 messages=[{"role": "user", "content": prompt}],
             )
             return response.choices[0].message.content

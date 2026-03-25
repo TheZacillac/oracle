@@ -89,6 +89,13 @@ def parse_llm_json(text: str) -> list[dict] | None:
         logger.debug("JSON repaired by parsing as NDJSON")
         return result
 
+    # Strategy 8: Nuclear — regex-based key-value extraction
+    # Handles the worst case: newlines + unescaped quotes + truncation
+    result = _regex_extract_objects(cleaned)
+    if result is not None:
+        logger.debug("JSON repaired by regex key-value extraction")
+        return result
+
     # All strategies failed
     return None
 
@@ -273,3 +280,103 @@ def _parse_ndjson(text: str) -> list[dict] | None:
                 start = None
 
     return results if results else None
+
+
+def _regex_extract_objects(text: str) -> list[dict] | None:
+    """Nuclear option: extract key-value pairs using regex patterns.
+
+    When all other strategies fail (usually due to unescaped quotes inside
+    string values combined with newlines and truncation), this function
+    uses regex to find JSON keys and extract the content between them.
+
+    This is lossy — it may mangle some values — but it recovers something
+    rather than losing the entire LLM response.
+    """
+    # Find all JSON key patterns: "key_name":
+    key_pattern = re.compile(r'"(\w+)"\s*:\s*')
+
+    # Find the boundaries of each object (look for { at depth 0)
+    objects: list[dict] = []
+
+    # Split on object boundaries heuristically
+    # Look for lines that start a new key after a potential object boundary
+    # Strategy: find all "key": "value" pairs using a greedy approach
+
+    # First, find all key positions
+    key_matches = list(key_pattern.finditer(text))
+    if not key_matches:
+        return None
+
+    current_obj: dict = {}
+
+    for i, match in enumerate(key_matches):
+        key = match.group(1)
+        value_start = match.end()
+
+        # Determine where the value ends
+        if i + 1 < len(key_matches):
+            # Value ends before the next key (minus the comma and whitespace)
+            next_key_start = key_matches[i + 1].start()
+            raw_value = text[value_start:next_key_start].strip()
+        else:
+            # Last key — take everything to the end
+            raw_value = text[value_start:].strip()
+
+        # Clean up the raw value
+        # Remove trailing commas, brackets, braces
+        raw_value = raw_value.rstrip().rstrip(",").rstrip()
+        raw_value = re.sub(r'[\}\]]\s*,?\s*$', '', raw_value).strip()
+
+        # Try to parse the value as JSON first
+        parsed_value = None
+        for attempt in [raw_value, raw_value + '"', '"' + raw_value + '"']:
+            try:
+                parsed_value = json.loads(attempt)
+                break
+            except (json.JSONDecodeError, ValueError):
+                continue
+
+        if parsed_value is None:
+            # Extract string content between quotes, handling newlines
+            string_match = re.match(r'^"(.*)', raw_value, re.DOTALL)
+            if string_match:
+                content = string_match.group(1)
+                # Remove trailing quote if present
+                if content.endswith('"'):
+                    content = content[:-1]
+                # Escape any remaining problematic characters
+                content = content.replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t')
+                parsed_value = content
+            elif raw_value.startswith('['):
+                # Try to parse as array, closing if truncated
+                attempt = raw_value
+                if not attempt.endswith(']'):
+                    attempt = re.sub(r',\s*$', '', attempt) + ']'
+                try:
+                    parsed_value = json.loads(attempt)
+                except (json.JSONDecodeError, ValueError):
+                    # Last resort: extract strings from array-like content
+                    items = re.findall(r'"([^"]*)"', raw_value)
+                    parsed_value = items if items else raw_value
+            else:
+                parsed_value = raw_value.strip('"')
+
+        # Detect object boundaries
+        # If we see the same key again or hit a `{`, start a new object
+        if key in current_obj and current_obj:
+            objects.append(current_obj)
+            current_obj = {}
+
+        current_obj[key] = parsed_value
+
+    # Don't forget the last object
+    if current_obj:
+        # Only add if it has at least a question/answer or user_question
+        has_content = any(
+            k in current_obj
+            for k in ("question", "answer", "user_question", "scenario", "analysis", "turns")
+        )
+        if has_content:
+            objects.append(current_obj)
+
+    return objects if objects else None
