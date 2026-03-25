@@ -97,7 +97,13 @@ def export_nemo_sft(
                 if msg["role"] == "system":
                     system_content = msg["content"]
                 else:
-                    conversations.append({"role": msg["role"], "content": msg["content"]})
+                    entry = {"role": msg["role"], "content": msg["content"]}
+                    # Preserve tool-use fields
+                    if "tool_calls" in msg:
+                        entry["tool_calls"] = msg["tool_calls"]
+                    if "tool_call_id" in msg:
+                        entry["tool_call_id"] = msg["tool_call_id"]
+                    conversations.append(entry)
 
             record = {
                 "system": system_content,

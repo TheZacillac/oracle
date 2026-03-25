@@ -151,17 +151,35 @@ class ToolUseGenerator(BaseGenerator):
             return self._client
 
         if self.provider == "anthropic":
-            import anthropic
-            self._client = anthropic.AsyncAnthropic()
+            try:
+                import anthropic
+                self._client = anthropic.AsyncAnthropic()
+            except ImportError:
+                raise RuntimeError(
+                    "anthropic package required for tool-use generation. "
+                    "Install with: pip install oracle[synthetic]"
+                )
         elif self.provider == "openai":
-            import openai
-            self._client = openai.AsyncOpenAI()
+            try:
+                import openai
+                self._client = openai.AsyncOpenAI()
+            except ImportError:
+                raise RuntimeError(
+                    "openai package required for tool-use generation. "
+                    "Install with: pip install oracle[synthetic]"
+                )
         elif self.provider == "ollama":
-            import openai
-            self._client = openai.AsyncOpenAI(
-                base_url=self.ollama_base_url,
-                api_key="ollama",
-            )
+            try:
+                import openai
+                self._client = openai.AsyncOpenAI(
+                    base_url=self.ollama_base_url,
+                    api_key="ollama",
+                )
+            except ImportError:
+                raise RuntimeError(
+                    "openai package required for Ollama support (OpenAI-compatible API). "
+                    "Install with: pip install oracle[synthetic]"
+                )
         else:
             raise ValueError(f"Unknown provider: {self.provider}")
 

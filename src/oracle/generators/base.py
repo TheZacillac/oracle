@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import json
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 
 from oracle.schema import TrainingExample
 from oracle.taxonomy import Category, Subcategory, Topic
+
+logger = logging.getLogger(__name__)
 
 
 class BaseGenerator(ABC):
@@ -65,13 +68,24 @@ class BaseGenerator(ABC):
 
     @staticmethod
     def load_examples(path: Path) -> list[TrainingExample]:
-        """Load examples from a JSONL file."""
+        """Load examples from a JSONL file, skipping corrupt lines."""
         examples = []
+        skipped = 0
         with open(path) as f:
-            for line in f:
+            for line_num, line in enumerate(f, 1):
                 line = line.strip()
-                if line:
+                if not line:
+                    continue
+                try:
                     examples.append(TrainingExample.model_validate_json(line))
+                except Exception as e:
+                    skipped += 1
+                    logger.warning("Skipping corrupt line %d in %s: %s", line_num, path.name, e)
+                    continue
+
+        if skipped:
+            logger.warning("Skipped %d corrupt line(s) in %s, loaded %d valid", skipped, path.name, len(examples))
+
         return examples
 
     @staticmethod
@@ -91,7 +105,10 @@ class BaseGenerator(ABC):
                     line = line.strip()
                     if not line:
                         continue
-                    data = json.loads(line)
+                    try:
+                        data = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
                     example_id = data.get("id", "")
                     if example_id.startswith(prefix):
                         try:

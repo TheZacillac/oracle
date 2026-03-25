@@ -8,8 +8,6 @@ from __future__ import annotations
 
 import json
 import logging
-from copy import deepcopy
-
 from oracle.schema import ExampleFormat, MessageRole, TrainingExample
 
 logger = logging.getLogger(__name__)
@@ -109,15 +107,21 @@ async def paraphrase_questions(
                 continue
 
             for i, para in enumerate(paraphrases[:paraphrases_per_example]):
-                new_example = deepcopy(example)
-                new_example.id = f"{example.id}-aug{i}"
+                if not para or not para.strip():
+                    continue
 
-                # Replace the user message content
-                for msg in new_example.messages:
+                # Build new messages with the paraphrased user question
+                new_messages = []
+                for msg in example.messages:
                     if msg.role == MessageRole.USER:
-                        msg.content = para
-                        break
+                        new_messages.append(msg.model_copy(update={"content": para}))
+                    else:
+                        new_messages.append(msg)
 
+                new_example = example.model_copy(update={
+                    "id": f"{example.id}-aug{i}",
+                    "messages": new_messages,
+                })
                 augmented.append(new_example)
 
         except Exception as e:

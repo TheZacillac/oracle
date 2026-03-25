@@ -101,11 +101,15 @@ def taxonomy(stats: bool, category: str | None):
 @click.option("--category", "-c", required=True, help="Category slug to generate for")
 @click.option("--difficulty", "-d", default="intermediate", type=click.Choice(["beginner", "intermediate", "advanced", "expert"]))
 @click.option("--count", "-n", default=3, help="Examples per topic")
+@click.option("--format", "-f", "format_type", default="instruction",
+              type=click.Choice(["instruction", "multi_turn", "scenario", "tool_use"]),
+              help="Training data format")
 @click.option("--provider", "-p", default="anthropic", type=click.Choice(["anthropic", "openai", "ollama"]))
 @click.option("--model", "-m", default=None, help="Model name override")
 @click.option("--output", "-o", default=None, type=click.Path(), help="Output directory")
-def generate(category: str, difficulty: str, count: int, provider: str, model: str | None, output: str | None):
+def generate(category: str, difficulty: str, count: int, format_type: str, provider: str, model: str | None, output: str | None):
     """Generate synthetic training data for a category."""
+    from oracle.schema import ExampleFormat
     from oracle.taxonomy import get_category
 
     cat = get_category(category)
@@ -114,23 +118,39 @@ def generate(category: str, difficulty: str, count: int, provider: str, model: s
         return
 
     output_dir = Path(output) if output else GENERATED_DIR
-
-    from oracle.generators.synthetic import SyntheticGenerator
-
-    gen = SyntheticGenerator(
-        output_dir=output_dir,
-        provider=provider,
-        model=model,
-    )
+    fmt = ExampleFormat(format_type)
 
     topic_total = sum(len(s.topics) for s in cat.subcategories)
     console.print(
         f"\n[bold]Generating[/bold] {count} × {topic_total} topics = "
-        f"~{count * topic_total} examples for [cyan]{cat.name}[/cyan] [{difficulty}]"
+        f"~{count * topic_total} {format_type} examples for [cyan]{cat.name}[/cyan] [{difficulty}]"
     )
 
-    examples = asyncio.run(gen.generate_category(cat, difficulty, count))
-    console.print(f"\n[green]Generated {len(examples)} examples → {output_dir}[/green]")
+    if fmt == ExampleFormat.TOOL_USE:
+        from oracle.generators.tool_use import ToolUseGenerator
+
+        gen = ToolUseGenerator(
+            output_dir=output_dir,
+            provider=provider,
+            model=model,
+        )
+        all_examples = []
+        for sub in cat.subcategories:
+            for topic in sub.topics:
+                examples = asyncio.run(gen.generate(cat, sub, topic, difficulty, count))
+                gen.save_examples(examples)
+                all_examples.extend(examples)
+        console.print(f"\n[green]Generated {len(all_examples)} tool-use examples → {output_dir}[/green]")
+    else:
+        from oracle.generators.synthetic import SyntheticGenerator
+
+        gen = SyntheticGenerator(
+            output_dir=output_dir,
+            provider=provider,
+            model=model,
+        )
+        examples = asyncio.run(gen.generate_category(cat, difficulty, count, format_type=fmt))
+        console.print(f"\n[green]Generated {len(examples)} examples → {output_dir}[/green]")
 
 
 # -----------------------------------------------------------------------

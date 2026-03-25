@@ -22,14 +22,16 @@ import re
 logger = logging.getLogger(__name__)
 
 
-def parse_llm_json(text: str) -> list[dict] | None:
+def parse_llm_json(text: str) -> list | None:
     """Parse LLM-generated JSON with multiple repair strategies.
 
     Args:
         text: Raw LLM response text.
 
     Returns:
-        List of parsed JSON objects, or None if all repair attempts fail.
+        List of parsed items (usually dicts, but may be strings for
+        array-of-strings responses like paraphrases), or None if all
+        repair attempts fail.
     """
     cleaned = _strip_fences(text.strip())
 
@@ -250,27 +252,45 @@ def _extract_json_array(text: str) -> str | None:
 
 
 def _parse_ndjson(text: str) -> list[dict] | None:
-    """Try parsing as newline-delimited JSON objects."""
+    """Try parsing as newline-delimited JSON objects.
+
+    Tracks string state to avoid being confused by braces inside
+    string values (e.g., zone file examples, JSON snippets in answers).
+    """
     results = []
-    # Try to find individual JSON objects
     depth = 0
     start = None
+    in_string = False
+    escape_next = False
 
     for i, char in enumerate(text):
-        if char == "{" and depth == 0:
-            start = i
+        if escape_next:
+            escape_next = False
+            continue
+        if char == "\\" and in_string:
+            escape_next = True
+            continue
+        if char == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+
         if char == "{":
+            if depth == 0:
+                start = i
             depth += 1
         elif char == "}":
             depth -= 1
             if depth == 0 and start is not None:
+                fragment = text[start : i + 1]
                 try:
-                    obj = json.loads(text[start : i + 1])
+                    obj = json.loads(fragment)
                     if isinstance(obj, dict):
                         results.append(obj)
                 except json.JSONDecodeError:
                     # Try with newline fix
-                    fixed = _fix_literal_newlines(text[start : i + 1])
+                    fixed = _fix_literal_newlines(fragment)
                     try:
                         obj = json.loads(fixed)
                         if isinstance(obj, dict):
