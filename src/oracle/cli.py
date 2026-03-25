@@ -101,7 +101,7 @@ def taxonomy(stats: bool, category: str | None):
 @click.option("--category", "-c", required=True, help="Category slug to generate for")
 @click.option("--difficulty", "-d", default="intermediate", type=click.Choice(["beginner", "intermediate", "advanced", "expert"]))
 @click.option("--count", "-n", default=3, help="Examples per topic")
-@click.option("--provider", "-p", default="anthropic", type=click.Choice(["anthropic", "openai"]))
+@click.option("--provider", "-p", default="anthropic", type=click.Choice(["anthropic", "openai", "ollama"]))
 @click.option("--model", "-m", default=None, help="Model name override")
 @click.option("--output", "-o", default=None, type=click.Path(), help="Output directory")
 def generate(category: str, difficulty: str, count: int, provider: str, model: str | None, output: str | None):
@@ -349,7 +349,7 @@ def stats(path: str):
 @main.command()
 @click.option("--size", "-s", default="medium", type=click.Choice(["small", "medium", "large"]))
 @click.option("--category", "-c", multiple=True, help="Specific categories (default: all)")
-@click.option("--provider", "-p", default="anthropic", type=click.Choice(["anthropic", "openai"]))
+@click.option("--provider", "-p", default="anthropic", type=click.Choice(["anthropic", "openai", "ollama"]))
 @click.option("--model", "-m", default=None, help="Model name override")
 @click.option("--output", "-o", default=None, type=click.Path(), help="Output directory")
 @click.option("--dry-run", is_flag=True, help="Show plan without executing")
@@ -454,7 +454,7 @@ def export_splits(
 @main.command()
 @click.argument("path", type=click.Path(exists=True))
 @click.option("--count", "-n", default=2, help="Paraphrases per example")
-@click.option("--provider", "-p", default="anthropic", type=click.Choice(["anthropic", "openai"]))
+@click.option("--provider", "-p", default="anthropic", type=click.Choice(["anthropic", "openai", "ollama"]))
 @click.option("--model", "-m", default=None, help="Model name override")
 @click.option("--output", "-o", default=None, type=click.Path(), help="Output file")
 def augment(path: str, count: int, provider: str, model: str | None, output: str | None):

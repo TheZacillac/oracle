@@ -51,6 +51,7 @@ async def paraphrase_questions(
         model = {
             "anthropic": "claude-sonnet-4-20250514",
             "openai": "gpt-4o",
+            "ollama": "nemotron-3-nano:latest",
         }.get(provider, "claude-sonnet-4-20250514")
 
     client = await _get_client(provider)
@@ -103,7 +104,7 @@ async def paraphrase_questions(
     return augmented
 
 
-async def _get_client(provider: str):
+async def _get_client(provider: str, ollama_base_url: str = "http://localhost:11434/v1"):
     """Get the LLM client."""
     if provider == "anthropic":
         import anthropic
@@ -111,6 +112,9 @@ async def _get_client(provider: str):
     elif provider == "openai":
         import openai
         return openai.AsyncOpenAI()
+    elif provider == "ollama":
+        import openai
+        return openai.AsyncOpenAI(base_url=ollama_base_url, api_key="ollama")
     raise ValueError(f"Unknown provider: {provider}")
 
 
@@ -122,7 +126,7 @@ async def _call_llm(client, provider: str, model: str, prompt: str) -> str:
             messages=[{"role": "user", "content": prompt}],
         )
         return response.content[0].text
-    elif provider == "openai":
+    elif provider in ("openai", "ollama"):
         response = await client.chat.completions.create(
             model=model, max_tokens=1024,
             messages=[{"role": "user", "content": prompt}],

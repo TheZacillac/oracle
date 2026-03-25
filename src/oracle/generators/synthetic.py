@@ -143,7 +143,7 @@ Output as a JSON array of objects. No markdown fencing, just raw JSON.
 class SyntheticGenerator(BaseGenerator):
     """Generate training data by prompting an LLM.
 
-    Supports Anthropic (Claude) and OpenAI-compatible APIs.
+    Supports Anthropic (Claude), OpenAI, and Ollama (via OpenAI-compatible API).
     """
 
     def __init__(
@@ -152,14 +152,17 @@ class SyntheticGenerator(BaseGenerator):
         provider: str = "anthropic",
         model: str | None = None,
         system_prompt: str | None = None,
+        ollama_base_url: str = "http://localhost:11434/v1",
     ):
         super().__init__(output_dir, system_prompt)
         self.provider = provider
+        self.ollama_base_url = ollama_base_url
 
         if model is None:
             self.model = {
                 "anthropic": "claude-sonnet-4-20250514",
                 "openai": "gpt-4o",
+                "ollama": "nemotron-3-nano:latest",
             }.get(provider, "claude-sonnet-4-20250514")
         else:
             self.model = model
@@ -191,6 +194,19 @@ class SyntheticGenerator(BaseGenerator):
                     "openai package required for synthetic generation. "
                     "Install with: pip install oracle[synthetic]"
                 )
+        elif self.provider == "ollama":
+            try:
+                import openai
+
+                self._client = openai.AsyncOpenAI(
+                    base_url=self.ollama_base_url,
+                    api_key="ollama",  # Ollama doesn't need a real key
+                )
+            except ImportError:
+                raise RuntimeError(
+                    "openai package required for Ollama support (OpenAI-compatible API). "
+                    "Install with: pip install oracle[synthetic]"
+                )
         else:
             raise ValueError(f"Unknown provider: {self.provider}")
 
@@ -207,7 +223,7 @@ class SyntheticGenerator(BaseGenerator):
                 messages=[{"role": "user", "content": prompt}],
             )
             return response.content[0].text
-        elif self.provider == "openai":
+        elif self.provider in ("openai", "ollama"):
             response = await client.chat.completions.create(
                 model=self.model,
                 max_tokens=4096,

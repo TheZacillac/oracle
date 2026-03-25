@@ -128,14 +128,17 @@ class ToolUseGenerator(BaseGenerator):
         provider: str = "anthropic",
         model: str | None = None,
         system_prompt: str | None = None,
+        ollama_base_url: str = "http://localhost:11434/v1",
     ):
         super().__init__(output_dir, system_prompt)
         self.provider = provider
+        self.ollama_base_url = ollama_base_url
 
         if model is None:
             self.model = {
                 "anthropic": "claude-sonnet-4-20250514",
                 "openai": "gpt-4o",
+                "ollama": "nemotron-3-nano:latest",
             }.get(provider, "claude-sonnet-4-20250514")
         else:
             self.model = model
@@ -153,6 +156,12 @@ class ToolUseGenerator(BaseGenerator):
         elif self.provider == "openai":
             import openai
             self._client = openai.AsyncOpenAI()
+        elif self.provider == "ollama":
+            import openai
+            self._client = openai.AsyncOpenAI(
+                base_url=self.ollama_base_url,
+                api_key="ollama",
+            )
         else:
             raise ValueError(f"Unknown provider: {self.provider}")
 
@@ -169,7 +178,7 @@ class ToolUseGenerator(BaseGenerator):
                 messages=[{"role": "user", "content": prompt}],
             )
             return response.content[0].text
-        elif self.provider == "openai":
+        elif self.provider in ("openai", "ollama"):
             response = await client.chat.completions.create(
                 model=self.model,
                 max_tokens=4096,
