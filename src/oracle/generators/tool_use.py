@@ -95,18 +95,21 @@ def _build_tool_use_prompt(
 Generate exactly {count} tool-use training example(s). Each example must follow this exact flow:
 
 1. **user_question**: A natural question that requires using one or more tools to answer properly
-2. **assistant_reasoning**: The assistant explains which tool(s) to use and why (1-2 sentences)
-3. **tool_calls**: Array of tool calls, each with "name" and "arguments" (valid JSON)
-4. **tool_results**: Array of realistic tool responses (valid JSON strings — invent plausible data)
-5. **assistant_interpretation**: The assistant interprets the results, providing expert analysis
+2. **thinking**: The expert's internal reasoning about which tools to use and why (2-5 sentences showing the thought process: what data is needed, which tools provide it, what order to call them)
+3. **assistant_reasoning**: The assistant's visible explanation of what they'll do (1-2 sentences)
+4. **tool_calls**: Array of tool calls, each with "name" and "arguments" (valid JSON)
+5. **tool_results**: Array of realistic tool responses (valid JSON strings — invent plausible data)
+6. **interpretation_thinking**: The expert's internal reasoning about the results (2-4 sentences analyzing what the data means, spotting issues, connecting to domain knowledge)
+7. **assistant_interpretation**: The assistant's visible interpretation with expert analysis
 
 The assistant should:
+- Think through which tools are needed and why before acting
 - Choose the most appropriate tool(s) for the question
-- Explain WHY it's using that tool before calling it
-- After receiving results, provide expert-level interpretation — not just parroting the data
+- After receiving results, reason about what the data means before responding
+- Provide expert-level interpretation — not just parroting the data
 - Add context, flag issues, suggest next steps where appropriate
 
-Output as a JSON array of objects with those 5 fields. No markdown fencing, just raw JSON.
+Output as a JSON array of objects with those 7 fields. No markdown fencing, just raw JSON.
 
 Important:
 - Tool results must be realistic — invent plausible domain data (real TLD structures, believable WHOIS dates, realistic DNS records)
@@ -248,7 +251,7 @@ class ToolUseGenerator(BaseGenerator):
             Message(role=MessageRole.USER, content=raw["user_question"]),
         ]
 
-        # Assistant reasoning + tool calls
+        # Assistant reasoning + tool calls (with thinking about tool selection)
         tool_calls_raw = raw.get("tool_calls", [])
         tool_calls = [
             ToolCall(
@@ -262,6 +265,7 @@ class ToolUseGenerator(BaseGenerator):
             Message(
                 role=MessageRole.ASSISTANT,
                 content=raw["assistant_reasoning"],
+                thinking=raw.get("thinking"),
                 tool_calls=tool_calls if tool_calls else None,
             )
         )
@@ -278,11 +282,12 @@ class ToolUseGenerator(BaseGenerator):
                 )
             )
 
-        # Assistant interpretation
+        # Assistant interpretation (with thinking about what results mean)
         messages.append(
             Message(
                 role=MessageRole.ASSISTANT,
                 content=raw["assistant_interpretation"],
+                thinking=raw.get("interpretation_thinking"),
             )
         )
 

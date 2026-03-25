@@ -12,19 +12,27 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
-from oracle.schema import DatasetMetadata, TrainingExample
+from oracle.schema import DatasetMetadata, MessageRole, TrainingExample
 
 logger = logging.getLogger(__name__)
 
 
-def to_chat_messages(example: TrainingExample) -> list[dict]:
+def to_chat_messages(example: TrainingExample, include_thinking: bool = True) -> list[dict]:
     """Convert a TrainingExample to OpenAI-style chat messages.
 
     Handles tool-use messages with tool_calls and tool responses.
+    When include_thinking is True, prepends <think>...</think> to assistant
+    content for messages that have a thinking trace (Nemotron-3-Nano format).
     """
     messages = []
     for m in example.messages:
-        msg: dict = {"role": m.role.value, "content": m.content}
+        content = m.content
+
+        # Prepend thinking trace to assistant messages
+        if include_thinking and m.thinking and m.role == MessageRole.ASSISTANT:
+            content = f"<think>\n{m.thinking}\n</think>\n{content}"
+
+        msg: dict = {"role": m.role.value, "content": content}
 
         # Assistant messages may include tool calls
         if m.tool_calls:

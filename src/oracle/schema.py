@@ -36,10 +36,16 @@ class Message(BaseModel):
     2. assistant: decides to call a tool (content explains reasoning, tool_calls contains the call)
     3. tool: returns the tool result (content is the result, tool_call_id references the call)
     4. assistant: interprets the result for the user
+
+    For thinking/reasoning training (Nemotron-3-Nano):
+    - Assistant messages may include a `thinking` field with the reasoning trace
+    - This gets rendered as <think>...</think> before the content during export
+    - Nemotron-3-Nano uses token ID 12 for <think> and 13 for </think>
     """
 
     role: MessageRole
     content: str = Field(min_length=1)
+    thinking: str | None = Field(default=None, description="Reasoning trace (rendered as <think>...</think> before content)")
     tool_calls: list[ToolCall] | None = Field(default=None, description="Tool calls made by the assistant")
     tool_call_id: str | None = Field(default=None, description="ID of the tool call this message responds to")
 

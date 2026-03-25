@@ -1,6 +1,12 @@
-# Training Guide: Fine-Tuning with Unsloth on DGX Spark
+# Training Guide: Fine-Tuning Nemotron-3-Nano-4B with Unsloth on DGX Spark
 
-Step-by-step process for generating the Oracle dataset, then fine-tuning a Nemotron model using Unsloth on a DGX Spark.
+Step-by-step process for generating the Oracle dataset, then fine-tuning NVIDIA's Nemotron-3-Nano-4B using Unsloth on a DGX Spark.
+
+**Target Model:** `nvidia/NVIDIA-Nemotron-3-Nano-4B-BF16` (Mamba2-Transformer hybrid, 3.97B params)
+**Architecture:** Mamba-2 + MLP layers with 4 Attention layers (Nemotron-Hybrid)
+**Context:** Up to 262K tokens
+**Thinking:** Native `<think>`/`</think>` support (token IDs 12/13)
+**Reasoning Split:** 75% with thinking traces / 25% without (preserves reasoning capability)
 
 ---
 
@@ -149,10 +155,9 @@ Visit the model page on Hugging Face and accept the license if prompted.
 Create `~/training/train.py` on the DGX Spark:
 
 ```python
-"""Fine-tune Nemotron on Oracle domain expert dataset using Unsloth."""
+"""Fine-tune Nemotron-3-Nano-4B on Oracle domain expert dataset using Unsloth."""
 
 from unsloth import FastLanguageModel
-from unsloth.chat_templates import get_chat_template
 from datasets import load_dataset
 from trl import SFTTrainer
 from transformers import TrainingArguments
@@ -161,17 +166,17 @@ from transformers import TrainingArguments
 # 1. Configuration
 # -----------------------------------------------------------------
 
-# Base model — choose based on your needs:
-#   "nvidia/Nemotron-Mini-4B-Instruct"   — 4B params, fastest training
-#   "nvidia/Mistral-NeMo-Minitron-8B-Instruct" — 8B, good balance
-#   "nvidia/Nemotron-4-340B-Instruct"    — 340B, requires quantization
-#
-# For DGX Spark with 128GB unified memory, 4B-8B models work well
-# in full precision, or up to ~70B with 4-bit quantization.
-MODEL_NAME = "nvidia/Nemotron-Mini-4B-Instruct"
+# Nemotron-3-Nano-4B — Mamba2-Transformer hybrid (3.97B params)
+# Uses Unsloth's optimized variant for faster training
+MODEL_NAME = "unsloth/NVIDIA-Nemotron-3-Nano-4B"
 
-MAX_SEQ_LENGTH = 4096
-LOAD_IN_4BIT = True  # QLoRA — set False for full LoRA if memory allows
+# Nemotron-3-Nano supports up to 262K context, but 4096-8192 is
+# sufficient for training and much more memory-efficient
+MAX_SEQ_LENGTH = 8192
+
+# DGX Spark has 128GB unified memory — can run full 16-bit LoRA
+# Set True for QLoRA (4-bit) if you want to save memory
+LOAD_IN_4BIT = False
 
 # LoRA configuration
 LORA_R = 64           # Rank — higher = more capacity, more memory
@@ -199,37 +204,39 @@ model, tokenizer = FastLanguageModel.from_pretrained(
     model_name=MODEL_NAME,
     max_seq_length=MAX_SEQ_LENGTH,
     load_in_4bit=LOAD_IN_4BIT,
-    dtype=None,  # Auto-detect (bf16 on Blackwell)
+    dtype=None,  # Auto-detect (bf16 on Blackwell GB10)
 )
 
 # -----------------------------------------------------------------
 # 3. Apply LoRA adapters
 # -----------------------------------------------------------------
 
+# Nemotron-3-Nano is a Mamba2-Transformer hybrid — Unsloth handles
+# the correct target modules automatically
 model = FastLanguageModel.get_peft_model(
     model,
     r=LORA_R,
     lora_alpha=LORA_ALPHA,
     lora_dropout=LORA_DROPOUT,
-    target_modules=[
-        "q_proj", "k_proj", "v_proj", "o_proj",
-        "gate_proj", "up_proj", "down_proj",
-    ],
+    # Let Unsloth auto-detect target modules for hybrid architecture
+    target_modules="all-linear",
     bias="none",
     use_gradient_checkpointing="unsloth",  # Unsloth optimized checkpointing
     random_state=42,
 )
 
 # -----------------------------------------------------------------
-# 4. Set up chat template
+# 4. Chat template
 # -----------------------------------------------------------------
 
-# Use the model's native chat template if available,
-# otherwise fall back to ChatML
-tokenizer = get_chat_template(
-    tokenizer,
-    chat_template="chatml",  # Works for most Nemotron models
-)
+# Nemotron-3-Nano uses ChatML-style template with <think> support:
+#   <|im_start|>system\n...<|im_end|>
+#   <|im_start|>user\n...<|im_end|>
+#   <|im_start|>assistant\n<think>...</think>...<|im_end|>
+#
+# The tokenizer's built-in chat_template handles this natively.
+# <think> = token ID 12, </think> = token ID 13
+# No manual template setup needed — apply_chat_template works out of the box.
 
 # -----------------------------------------------------------------
 # 5. Load and format dataset
@@ -242,7 +249,12 @@ dataset = load_dataset("json", data_files={
 
 
 def format_example(example):
-    """Convert Oracle's OpenAI chat format to the training format."""
+    """Convert Oracle's OpenAI chat format to the training format.
+
+    The dataset already includes <think>...</think> blocks in assistant
+    message content (added by Oracle's exporter), so we just apply the
+    chat template directly.
+    """
     messages = example["messages"]
     text = tokenizer.apply_chat_template(
         messages,
@@ -258,6 +270,11 @@ val_dataset = dataset["validation"].map(format_example)
 print(f"Train: {len(train_dataset)} examples")
 print(f"Val:   {len(val_dataset)} examples")
 
+# Verify thinking traces are present
+sample = train_dataset[0]["text"]
+has_thinking = "<think>" in sample
+print(f"Thinking traces in dataset: {has_thinking}")
+
 # -----------------------------------------------------------------
 # 6. Configure training
 # -----------------------------------------------------------------
@@ -272,7 +289,7 @@ training_args = TrainingArguments(
     lr_scheduler_type="cosine",
     warmup_ratio=WARMUP_RATIO,
     weight_decay=0.01,
-    bf16=True,  # Blackwell supports bf16 natively
+    bf16=True,  # Blackwell GB10 supports bf16 natively
     logging_steps=10,
     eval_strategy="steps",
     eval_steps=100,
@@ -333,10 +350,10 @@ python ~/training/train.py
 
 | Dataset Size | Model | DGX Spark (GB10) |
 |-------------|-------|-------------------|
-| ~1,300 (small) | 4B 4-bit | ~15-30 min |
-| ~4,200 (medium) | 4B 4-bit | ~1-2 hours |
-| ~10,500 (large) | 4B 4-bit | ~3-5 hours |
-| ~4,200 (medium) | 8B 4-bit | ~2-4 hours |
+| ~1,300 (small) | Nano 4B 16-bit | ~15-30 min |
+| ~4,200 (medium) | Nano 4B 16-bit | ~1-2 hours |
+| ~10,500 (large) | Nano 4B 16-bit | ~3-5 hours |
+| ~4,200 (medium) | Nano 4B 4-bit | ~45 min - 1.5 hours |
 
 ### 3.3 Monitor training
 
@@ -371,7 +388,7 @@ MERGED_DIR = "~/training/output/oracle-nemotron-merged"
 # Load the trained model
 model, tokenizer = FastLanguageModel.from_pretrained(
     model_name=f"{MODEL_DIR}/lora-adapter",
-    max_seq_length=4096,
+    max_seq_length=8192,
     load_in_4bit=False,  # Load in full precision for merging
 )
 
@@ -400,7 +417,7 @@ for quant in ["q4_k_m", "q5_k_m", "q8_0", "f16"]:
 
 ### 4.2 Quantization options
 
-| Method | Size (4B model) | Quality | Speed | Use Case |
+| Method | Size (Nano 4B) | Quality | Speed | Use Case |
 |--------|-----------------|---------|-------|----------|
 | `q4_k_m` | ~2.5 GB | Good | Fast | Daily use, Ollama default |
 | `q5_k_m` | ~3.2 GB | Better | Fast | Recommended balance |
@@ -429,13 +446,15 @@ SYSTEM """You are a domain name industry expert — an authoritative, comprehens
 
 Your knowledge spans DNS protocols, domain registration, TLDs, registrars, ICANN, IANA, WHOIS/RDAP, domain blocking, WIPO disputes, SSL/TLS, brand protection, DNS abuse, email authentication, domain valuation, web hosting, internet governance, domain security, compliance, DNS monitoring, internationalization, DNS automation, DNS software, protective DNS, debugging tools, and the domain industry.
 
-Be precise, cite sources, and provide practical guidance."""
+Think through complex questions step by step before answering. Be precise, cite sources, and provide practical guidance."""
 
-PARAMETER temperature 0.7
-PARAMETER top_p 0.9
-PARAMETER num_ctx 4096
+PARAMETER temperature 1.0
+PARAMETER top_p 0.95
+PARAMETER num_ctx 8192
 PARAMETER stop "<|im_end|>"
 ```
+
+> **Note on temperature**: Nemotron-3-Nano is trained with `temperature=1.0` and `top_p=0.95` for reasoning tasks. Using lower temperatures may degrade thinking quality. For simple lookups, you can reduce to `0.6`.
 
 ### 5.2 Import into Ollama
 

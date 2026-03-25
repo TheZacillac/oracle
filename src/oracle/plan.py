@@ -90,6 +90,10 @@ class GenerationPlan:
     # Default examples per topic when no category plan is specified
     default_per_topic: int = 10
 
+    # Reasoning split — Nemotron-3-Nano recommends 75% reasoning / 25% non-reasoning
+    # to preserve the model's reasoning capabilities during fine-tuning
+    thinking_ratio: float = 0.75  # Fraction of examples that include <think> traces
+
     # Generation settings
     provider: str = "anthropic"
     model: str | None = None
@@ -184,6 +188,9 @@ async def execute_plan(
         model=plan.model,
     )
 
+    import random
+    rng = random.Random(42)
+
     target_categories = categories or [c.slug for c in TAXONOMY]
     results: dict[str, int] = {}
 
@@ -243,6 +250,10 @@ async def execute_plan(
                         except ValueError:
                             pass
 
+                        # Decide whether this batch includes thinking traces
+                        # based on the plan's thinking_ratio (default 75%)
+                        include_thinking = rng.random() < plan.thinking_ratio
+
                         try:
                             if fmt == ExampleFormat.TOOL_USE:
                                 examples = await gen.generate(
@@ -260,6 +271,7 @@ async def execute_plan(
                                     difficulty=difficulty,
                                     count=min(fmt_count, plan.batch_size),
                                     format_type=fmt,
+                                    include_thinking=include_thinking,
                                 )
                             gen.save_examples(examples)
                             cat_total += len(examples)

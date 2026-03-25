@@ -31,6 +31,7 @@ def _build_generation_prompt(
     difficulty: str,
     format_type: ExampleFormat,
     count: int,
+    include_thinking: bool = True,
 ) -> str:
     """Build the meta-prompt that instructs the LLM to generate training examples."""
     profile = get_profile(difficulty)
@@ -43,6 +44,22 @@ def _build_generation_prompt(
     if topic.key_concepts:
         concepts_context = f"\nKey concepts to cover: {', '.join(topic.key_concepts)}"
 
+    # Thinking trace instructions
+    thinking_instruction = ""
+    thinking_schema = ""
+    if include_thinking:
+        thinking_instruction = (
+            "\n## Reasoning Traces\n"
+            "Each assistant response MUST include a thinking trace — the expert's internal reasoning "
+            "before formulating the answer. This should show HOW the expert arrives at the answer: "
+            "which sources to consult, what factors to weigh, what the key distinctions are.\n"
+            "The thinking trace should be natural reasoning, not a summary of the answer."
+        )
+        thinking_schema = (
+            '- "thinking": The expert\'s internal reasoning process (2-5 sentences showing how they '
+            'approach the question — which sources apply, what distinctions matter, what to check)\n'
+        )
+
     # Format-specific instructions and JSON schema
     if format_type == ExampleFormat.INSTRUCTION:
         format_instruction = (
@@ -50,6 +67,7 @@ def _build_generation_prompt(
         )
         json_schema = (
             '- "question": The user\'s question (natural, varied phrasing)\n'
+            f'{thinking_schema}'
             '- "answer": The expert\'s response\n'
             '- "sources": List of source references (RFCs, ICANN documents, etc.)'
         )
@@ -61,6 +79,10 @@ def _build_generation_prompt(
             "exploring a related aspect."
         )
         json_schema = (
+            '- "turns": Array of exchanges, each with "user", "thinking", and "assistant" strings\n'
+            '  Example: [{"user": "...", "thinking": "...", "assistant": "..."}, ...]\n'
+            '- "sources": List of source references'
+        ) if include_thinking else (
             '- "turns": Array of exchanges, each with "user" and "assistant" strings\n'
             '  Example: [{"user": "...", "assistant": "..."}, {"user": "...", "assistant": "..."}]\n'
             '- "sources": List of source references'
@@ -74,6 +96,7 @@ def _build_generation_prompt(
         )
         json_schema = (
             '- "scenario": The user\'s scenario description and question\n'
+            f'{thinking_schema}'
             '- "analysis": The expert\'s structured response (diagnosis + recommendations + next steps)\n'
             '- "sources": List of source references'
         )
@@ -98,6 +121,7 @@ def _build_generation_prompt(
 
 ## Format
 {format_instruction}
+{thinking_instruction}
 
 ## Instructions
 Generate exactly {count} training example(s). For each example, output a JSON object with:
@@ -201,6 +225,7 @@ class SyntheticGenerator(BaseGenerator):
         difficulty: str,
         count: int = 1,
         format_type: ExampleFormat = ExampleFormat.INSTRUCTION,
+        include_thinking: bool = True,
     ) -> list[TrainingExample]:
         """Generate synthetic training examples for a topic."""
         prompt = _build_generation_prompt(
@@ -210,6 +235,7 @@ class SyntheticGenerator(BaseGenerator):
             difficulty=difficulty,
             format_type=format_type,
             count=count,
+            include_thinking=include_thinking,
         )
 
         logger.info(
@@ -273,29 +299,45 @@ class SyntheticGenerator(BaseGenerator):
 
         if format_type == ExampleFormat.INSTRUCTION:
             messages.append(Message(role=MessageRole.USER, content=raw["question"]))
-            messages.append(Message(role=MessageRole.ASSISTANT, content=raw["answer"]))
+            messages.append(Message(
+                role=MessageRole.ASSISTANT,
+                content=raw["answer"],
+                thinking=raw.get("thinking"),
+            ))
 
         elif format_type == ExampleFormat.MULTI_TURN:
-            # Multi-turn: alternating user/assistant exchanges
             turns = raw.get("turns", [])
             if not turns:
-                # Fallback: treat as single-turn
                 messages.append(Message(role=MessageRole.USER, content=raw.get("question", "")))
-                messages.append(Message(role=MessageRole.ASSISTANT, content=raw.get("answer", "")))
+                messages.append(Message(
+                    role=MessageRole.ASSISTANT,
+                    content=raw.get("answer", ""),
+                    thinking=raw.get("thinking"),
+                ))
             else:
                 for turn in turns:
                     messages.append(Message(role=MessageRole.USER, content=turn["user"]))
-                    messages.append(Message(role=MessageRole.ASSISTANT, content=turn["assistant"]))
+                    messages.append(Message(
+                        role=MessageRole.ASSISTANT,
+                        content=turn["assistant"],
+                        thinking=turn.get("thinking"),
+                    ))
 
         elif format_type == ExampleFormat.SCENARIO:
-            # Scenario: user describes situation, assistant provides structured analysis
             messages.append(Message(role=MessageRole.USER, content=raw["scenario"]))
-            messages.append(Message(role=MessageRole.ASSISTANT, content=raw["analysis"]))
+            messages.append(Message(
+                role=MessageRole.ASSISTANT,
+                content=raw["analysis"],
+                thinking=raw.get("thinking"),
+            ))
 
         else:
-            # Default fallback
             messages.append(Message(role=MessageRole.USER, content=raw.get("question", "")))
-            messages.append(Message(role=MessageRole.ASSISTANT, content=raw.get("answer", "")))
+            messages.append(Message(
+                role=MessageRole.ASSISTANT,
+                content=raw.get("answer", ""),
+                thinking=raw.get("thinking"),
+            ))
 
         return messages
 
