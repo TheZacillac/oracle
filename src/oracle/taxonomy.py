@@ -798,6 +798,118 @@ TAXONOMY: list[Category] = [
                     ),
                 ],
             ),
+            Subcategory(
+                name="Retail Registrars",
+                slug="retail_registrars",
+                description="Major retail/consumer ICANN-accredited registrars, their product offerings, and market positions.",
+                topics=[
+                    Topic(
+                        name="GoDaddy",
+                        description="World's largest registrar by domain volume. Products: domain registration, website builder, hosting, email, SSL. Auction platform, domain brokerage, investor tools. Publicly traded (GDDY).",
+                        key_concepts=["GoDaddy", "largest registrar", "aftermarket", "domain auctions", "website builder", "upselling", "GoDaddy Auctions", "bulk tools"],
+                    ),
+                    Topic(
+                        name="Namecheap",
+                        description="Value-focused registrar popular with developers and small businesses. Products: domains, shared/VPS hosting, EasyWP, FreeDNS, WhoisGuard privacy, email hosting, VPN (FastVPN). Known for competitive pricing and transparent renewals.",
+                        key_concepts=["Namecheap", "WhoisGuard", "FreeDNS", "competitive pricing", "EasyWP", "developer-friendly", "transparent renewal"],
+                    ),
+                    Topic(
+                        name="Tucows / Enom / Hover",
+                        description="Tucows ecosystem: Enom (wholesale/reseller backend), Hover (retail brand, simplicity-focused), OpenSRS (reseller platform). One of the largest wholesale registrar operations.",
+                        key_concepts=["Tucows", "Enom", "Hover", "OpenSRS", "wholesale registrar", "reseller backend", "EPAG"],
+                    ),
+                    Topic(
+                        name="Porkbun",
+                        description="Fast-growing value registrar known for low prices, free WHOIS privacy, free SSL, free email forwarding, and a modern user interface. Developer-friendly API.",
+                        key_concepts=["Porkbun", "low-cost registrar", "free WHOIS privacy", "free SSL", "API access", "modern UX"],
+                    ),
+                    Topic(
+                        name="Squarespace Domains (formerly Google Domains)",
+                        description="Google Domains acquisition by Squarespace (2023). Simple pricing, free WHOIS privacy, Google Workspace integration. Domain management within the Squarespace ecosystem.",
+                        key_concepts=["Squarespace Domains", "Google Domains", "acquisition", "Google Workspace", "simple pricing", "transparent renewal"],
+                    ),
+                    Topic(
+                        name="Gandi",
+                        description="French registrar with strong privacy stance ('No Bullshit' philosophy). Products: domains (750+ TLDs), email, SSL, hosting. Known for ethical approach and developer-friendly API. Now part of WHC group.",
+                        key_concepts=["Gandi", "No Bullshit", "privacy focus", "French registrar", "ethical registrar", "LiveDNS", "WHC acquisition"],
+                    ),
+                    Topic(
+                        name="IONOS (1&1) and European retail registrars",
+                        description="IONOS/1&1 as a major European registrar and hosting provider. OVHcloud domains, Infomaniak, Strato. European market dynamics and regulatory differences.",
+                        key_concepts=["IONOS", "1&1", "OVHcloud", "Infomaniak", "European registrar", "Strato", "hosting bundled"],
+                    ),
+                    Topic(
+                        name="Dynadot, Name.com, and mid-tier registrars",
+                        description="Mid-tier registrars with loyal followings: Dynadot (investor-friendly, auction marketplace), Name.com (Identity Digital subsidiary), Internet.bs, Epik, Rebel.com.",
+                        key_concepts=["Dynadot", "Name.com", "Internet.bs", "Epik", "Rebel.com", "Identity Digital", "mid-tier registrar"],
+                    ),
+                    Topic(
+                        name="Regional and country-specific registrars",
+                        description="Registrars serving specific markets: Alibaba Cloud / Wanwang (China), GMO (Japan), Netim (France), Key-Systems (Germany), domain.com.au (Australia). Local compliance and language requirements.",
+                        key_concepts=["regional registrar", "Alibaba Cloud", "Wanwang", "GMO", "Key-Systems", "local compliance", "ccTLD requirements"],
+                    ),
+                ],
+            ),
+            Subcategory(
+                name="Corporate Registrars",
+                slug="corporate_registrars",
+                description="Enterprise-grade ICANN-accredited registrars specializing in corporate domain portfolio management, brand protection, and high-security services.",
+                topics=[
+                    Topic(
+                        name="Corporate registrar overview",
+                        description="What distinguishes corporate registrars from retail: dedicated account management, registry lock, legal support, brand monitoring, consolidated billing, SLAs, custom reporting, enterprise API access.",
+                        key_concepts=["corporate registrar", "enterprise DNS", "account management", "registry lock", "SLA", "consolidated billing", "brand protection"],
+                    ),
+                    Topic(
+                        name="MarkMonitor (Clarivate)",
+                        description="Industry-leading corporate registrar for Fortune 500 brands. Products: domain management, brand protection monitoring, anti-fraud solutions, SSL management, paid search monitoring. Part of Clarivate Analytics.",
+                        key_concepts=["MarkMonitor", "Clarivate", "Fortune 500", "brand protection", "anti-fraud", "domain management platform", "enterprise"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="CSC Digital Brand Services",
+                        description="Corporate registrar and brand protection specialist. Products: DBS platform for domain/DNS/SSL management, brand monitoring, domain security (MultiLock, registry lock), DMARC enforcement, online brand protection.",
+                        key_concepts=["CSC", "DBS platform", "MultiLock", "DMARC enforcement", "domain security", "brand monitoring", "corporate portfolio"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="Com Laude",
+                        description="UK-based corporate registrar specializing in premium domain management, registry lock services, brand protection, and DNS hosting for enterprise clients. Comprehensive portfolio management platform.",
+                        key_concepts=["Com Laude", "UK registrar", "premium management", "registry lock", "portfolio management", "brand protection", "enterprise DNS"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="Safenames",
+                        description="Corporate registrar focused on brand protection and domain portfolio management. Products: domain management, watch services, enforcement, SSL, DNS hosting. Part of CentralNic Group.",
+                        key_concepts=["Safenames", "CentralNic", "brand protection", "watch services", "enforcement", "portfolio management"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="BRANDIT and BrandShelter",
+                        description="European corporate registrars: BRANDIT (Swiss, TMCH-integrated brand protection), BrandShelter (domain and brand management platform, blocking services). Specialized blocking and monitoring products.",
+                        key_concepts=["BRANDIT", "BrandShelter", "TMCH integration", "blocking services", "Swiss registrar", "European corporate"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="Wholesale and backend registrar infrastructure",
+                        description="Registrars providing backend infrastructure: CentralNic (registry + registrar platform), Identity Digital (formerly Donuts/Afilias), Gname, RealTime Register, Ascio (Tucows). White-label and reseller platform architecture.",
+                        key_concepts=["CentralNic", "Identity Digital", "Gname", "RealTime Register", "Ascio", "backend registrar", "platform infrastructure", "wholesale"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="Corporate registrar security services",
+                        description="Enterprise security offerings: registry lock implementation, two-factor domain changes, out-of-band verification, DNSSEC management, domain seizure prevention, domain monitoring and alerting.",
+                        key_concepts=["registry lock", "two-factor changes", "out-of-band verification", "DNSSEC management", "seizure prevention", "domain monitoring", "security SLA"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="Corporate domain portfolio management",
+                        description="Managing large domain portfolios: consolidation strategies, renewal optimization, defensive registration audits, cost rationalization, reporting and analytics, compliance workflows, multi-stakeholder governance.",
+                        key_concepts=["portfolio management", "consolidation", "renewal optimization", "defensive audit", "cost rationalization", "compliance workflow", "stakeholder governance"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                ],
+            ),
         ],
     ),
     # ===================================================================
