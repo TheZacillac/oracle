@@ -279,6 +279,14 @@ class SyntheticGenerator(BaseGenerator):
         next_seq = self._get_next_seq(category.slug, subcategory.slug)
 
         for i, raw in enumerate(raw_examples):
+            # Skip non-dict items (LLM sometimes returns strings instead of objects)
+            if not isinstance(raw, dict):
+                logger.warning(
+                    "Skipping example %d: expected dict, got %s (%s)",
+                    i, type(raw).__name__, str(raw)[:100],
+                )
+                continue
+
             try:
                 messages = self._build_messages(raw, format_type)
 
@@ -295,7 +303,7 @@ class SyntheticGenerator(BaseGenerator):
                 )
                 examples.append(example)
             except Exception as e:
-                keys = list(raw.keys()) if isinstance(raw, dict) else type(raw).__name__
+                keys = list(raw.keys())
                 logger.warning("Skipping invalid example %d (keys=%s): %s", i, keys, e)
                 continue
 

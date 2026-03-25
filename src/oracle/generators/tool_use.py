@@ -225,6 +225,13 @@ class ToolUseGenerator(BaseGenerator):
         next_seq = self._get_next_seq(category.slug, subcategory.slug)
 
         for i, raw in enumerate(raw_examples):
+            if not isinstance(raw, dict):
+                logger.warning(
+                    "Skipping tool-use example %d: expected dict, got %s (%s)",
+                    i, type(raw).__name__, str(raw)[:100],
+                )
+                continue
+
             try:
                 messages = self._build_messages(raw)
                 example = TrainingExample(
@@ -240,7 +247,8 @@ class ToolUseGenerator(BaseGenerator):
                 )
                 examples.append(example)
             except Exception as e:
-                logger.warning("Skipping invalid tool-use example %d: %s", i, e)
+                keys = list(raw.keys())
+                logger.warning("Skipping invalid tool-use example %d (keys=%s): %s", i, keys, e)
                 continue
 
         logger.info("Generated %d valid tool-use examples (requested %d)", len(examples), count)
