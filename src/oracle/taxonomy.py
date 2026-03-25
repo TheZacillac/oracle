@@ -1879,6 +1879,88 @@ TAXONOMY: list[Category] = [
                 ],
             ),
             Subcategory(
+                name="DNS Hosting Providers",
+                slug="dns_providers",
+                description="Major DNS hosting providers, their product offerings, technological capabilities, and how to evaluate them.",
+                topics=[
+                    Topic(
+                        name="DNS provider landscape overview",
+                        description="Categories of DNS hosting providers: cloud-integrated, independent managed, registrar-bundled, enterprise-grade. Market dynamics and consolidation trends.",
+                        key_concepts=["managed DNS", "cloud DNS", "registrar DNS", "enterprise DNS", "independent providers", "market consolidation"],
+                    ),
+                    Topic(
+                        name="Cloudflare DNS",
+                        description="Cloudflare's free and paid DNS offerings, proxy mode (orange cloud), 1.1.1.1 resolver, Workers integration, DDoS protection, analytics, CNAME flattening, zero-TTL propagation.",
+                        key_concepts=["Cloudflare", "orange cloud", "proxy mode", "CNAME flattening", "Cloudflare Workers", "1.1.1.1", "zero-TTL", "free DNS", "Universal SSL"],
+                    ),
+                    Topic(
+                        name="Amazon Route 53",
+                        description="Route 53 features: alias records, health checks, routing policies (simple, weighted, latency, geolocation, failover, multivalue), Traffic Flow, private hosted zones, DNSSEC signing, pricing model.",
+                        key_concepts=["Route 53", "alias records", "health checks", "routing policies", "latency routing", "geolocation", "Traffic Flow", "private hosted zones", "per-query pricing"],
+                    ),
+                    Topic(
+                        name="Google Cloud DNS",
+                        description="Cloud DNS features: 100% SLA, public and private zones, DNSSEC, integration with GKE and Cloud CDN, peering zones, forwarding zones, response policies.",
+                        key_concepts=["Cloud DNS", "100% SLA", "private zones", "peering zones", "forwarding zones", "response policies", "GKE integration"],
+                    ),
+                    Topic(
+                        name="Azure DNS",
+                        description="Azure DNS features: alias record sets, private DNS zones, DNS forwarding rulesets, Azure Traffic Manager integration, Azure Front Door DNS, zone delegation.",
+                        key_concepts=["Azure DNS", "alias records", "private DNS zones", "Traffic Manager", "Azure Front Door", "forwarding rulesets"],
+                    ),
+                    Topic(
+                        name="NS1 (IBM)",
+                        description="NS1's advanced traffic steering: Filter Chains, Pulsar active traffic steering, managed DNS with RUM-based routing, DDoS protection, dedicated DNS networks, API-first design.",
+                        key_concepts=["NS1", "Filter Chains", "Pulsar", "RUM-based routing", "traffic steering", "API-first", "dedicated networks", "IBM acquisition"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="Akamai Edge DNS and enterprise DNS",
+                        description="Akamai Edge DNS (formerly Fast DNS): enterprise-grade authoritative DNS, DDoS resilience, SiteShield integration, global anycast, zone apex CNAME support.",
+                        key_concepts=["Akamai", "Edge DNS", "Fast DNS", "SiteShield", "enterprise DNS", "anycast", "DDoS resilience"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="UltraDNS (Vercara)",
+                        description="UltraDNS features: enterprise DNS with DDoS protection, traffic management, sitebacker failover, directory services, UltraDDoS Protect, proactive monitoring.",
+                        key_concepts=["UltraDNS", "Vercara", "Neustar", "DDoS Protect", "sitebacker", "traffic management", "enterprise"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="DNSimple and developer-focused providers",
+                        description="DNSimple, DNS Made Easy, ClouDNS, Hetzner DNS, Bunny DNS, Hurricane Electric — developer-focused and independent DNS providers, their APIs, pricing, and specializations.",
+                        key_concepts=["DNSimple", "DNS Made Easy", "ClouDNS", "Hetzner DNS", "Bunny DNS", "Hurricane Electric", "developer API", "independent DNS"],
+                    ),
+                    Topic(
+                        name="Registrar DNS vs dedicated DNS hosting",
+                        description="Comparing registrar-bundled DNS (GoDaddy, Namecheap, Porkbun) with dedicated DNS hosting. Performance, feature, reliability, and security differences.",
+                        key_concepts=["registrar DNS", "bundled DNS", "dedicated DNS", "GoDaddy DNS", "Namecheap DNS", "performance comparison", "DNS delegation"],
+                    ),
+                    Topic(
+                        name="DNS provider technology comparison",
+                        description="Comparing provider capabilities: anycast network size, PoP locations, DNSSEC support, ALIAS/ANAME records, GeoDNS, failover, health checks, API quality, Terraform support, secondary DNS.",
+                        key_concepts=["anycast network", "PoP locations", "ALIAS records", "ANAME records", "GeoDNS", "failover", "API quality", "Terraform provider", "secondary DNS", "zone transfer"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="DNS provider pricing models",
+                        description="Pricing comparison across DNS providers: free tiers, per-query pricing (Route 53), flat-rate (Cloudflare), tiered plans, enterprise contracts, overage charges, zone/record limits.",
+                        key_concepts=["per-query pricing", "flat-rate DNS", "free tier", "zone limits", "record limits", "query volume", "enterprise pricing", "overage charges"],
+                    ),
+                    Topic(
+                        name="Choosing a DNS provider",
+                        description="Decision framework for selecting a DNS hosting provider based on requirements: reliability/SLA, performance, features, automation, security, cost, vendor lock-in, migration ease.",
+                        key_concepts=["provider selection", "SLA requirements", "query volume", "feature needs", "vendor lock-in", "migration", "evaluation criteria", "RFP process"],
+                    ),
+                    Topic(
+                        name="Multi-provider DNS and secondary DNS strategies",
+                        description="Running DNS across multiple providers for redundancy: primary/secondary setups, zone transfer (AXFR/IXFR) between providers, NS record delegation patterns, hidden primary architecture.",
+                        key_concepts=["multi-provider DNS", "secondary DNS", "AXFR", "IXFR", "hidden primary", "NS delegation", "provider redundancy", "DNS resilience"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                ],
+            ),
+            Subcategory(
                 name="Web Security via DNS",
                 slug="web_security",
                 description="DNS-layer security for web properties.",
