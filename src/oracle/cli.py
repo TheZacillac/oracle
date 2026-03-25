@@ -137,10 +137,13 @@ def generate(category: str, difficulty: str, count: int, provider: str, model: s
 # fetch-sources
 # -----------------------------------------------------------------------
 @main.command("fetch-sources")
-@click.option("--type", "-t", "source_type", default="all", type=click.Choice(["rfc", "iana", "icann", "all"]))
+@click.option(
+    "--type", "-t", "source_type", default="all",
+    type=click.Choice(["rfc", "iana", "icann", "cabforum", "psl", "industry", "governance", "dns-software", "all"]),
+)
 @click.option("--output", "-o", default=None, type=click.Path(), help="Cache directory")
 def fetch_sources(source_type: str, output: str | None):
-    """Fetch and cache source documents (RFCs, IANA data, ICANN docs)."""
+    """Fetch and cache source documents (RFCs, IANA, ICANN, CA/B Forum, PSL, industry, governance, DNS software)."""
     cache_dir = Path(output) if output else SOURCES_DIR
 
     async def _fetch():
@@ -162,18 +165,67 @@ def fetch_sources(source_type: str, output: str | None):
             iana_fetcher = IanaFetcher(cache_dir / "iana")
             data = await iana_fetcher.fetch_all()
             fetched += 1
-            console.print(f"  [green]Fetched IANA data: {len(data.tld_list)} TLDs, {len(data.rr_types)} RR types[/green]")
+            console.print(
+                f"  [green]Fetched IANA data: {len(data.tld_list)} TLDs, "
+                f"{len(data.rr_types)} RR types, {len(data.dnssec_algorithms)} DNSSEC algorithms, "
+                f"{len(data.root_hints)} root servers[/green]"
+            )
 
         if source_type in ("icann", "all"):
             from oracle.sources.icann import IcannFetcher
 
             icann_fetcher = IcannFetcher(cache_dir / "icann")
             sources = icann_fetcher.list_available_sources()
-            console.print(f"Fetching {len(sources)} ICANN/WIPO documents...")
+            console.print(f"Fetching {len(sources)} ICANN/WIPO/dispute documents...")
             for src in sources:
                 await icann_fetcher.fetch_document(src["key"])
             fetched += len(sources)
             console.print(f"  [green]Fetched {len(sources)} documents[/green]")
+
+        if source_type in ("cabforum", "all"):
+            from oracle.sources.cabforum import CaBrowserForumFetcher
+
+            cabf_fetcher = CaBrowserForumFetcher(cache_dir / "cabforum")
+            docs = await cabf_fetcher.fetch_all()
+            fetched += len(docs)
+            console.print(f"  [green]Fetched {len(docs)} CA/Browser Forum documents[/green]")
+
+        if source_type in ("psl", "all"):
+            from oracle.sources.psl import PslFetcher
+
+            psl_fetcher = PslFetcher(cache_dir / "psl")
+            data = await psl_fetcher.fetch()
+            if data:
+                fetched += 1
+                console.print(
+                    f"  [green]Fetched PSL: {data.tld_count} TLDs, "
+                    f"{data.effective_tld_count} effective TLDs, "
+                    f"{data.private_suffix_count} private suffixes[/green]"
+                )
+
+        if source_type in ("industry", "all"):
+            from oracle.sources.industry import IndustryFetcher
+
+            ind_fetcher = IndustryFetcher(cache_dir / "industry")
+            docs = await ind_fetcher.fetch_all()
+            fetched += len(docs)
+            console.print(f"  [green]Fetched {len(docs)} industry organization documents[/green]")
+
+        if source_type in ("governance", "all"):
+            from oracle.sources.governance import GovernanceFetcher
+
+            gov_fetcher = GovernanceFetcher(cache_dir / "governance")
+            docs = await gov_fetcher.fetch_all()
+            fetched += len(docs)
+            console.print(f"  [green]Fetched {len(docs)} governance/standards documents[/green]")
+
+        if source_type in ("dns-software", "all"):
+            from oracle.sources.dns_software import DnsSoftwareFetcher
+
+            dns_fetcher = DnsSoftwareFetcher(cache_dir / "dns_software")
+            docs = await dns_fetcher.fetch_all()
+            fetched += len(docs)
+            console.print(f"  [green]Fetched {len(docs)} DNS software documents[/green]")
 
         return fetched
 
