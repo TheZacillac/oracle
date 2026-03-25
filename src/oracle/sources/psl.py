@@ -16,6 +16,8 @@ import httpx
 logger = logging.getLogger(__name__)
 
 PSL_URL = "https://publicsuffix.org/list/public_suffix_list.dat"
+PSL_LEARN_URL = "https://publicsuffix.org/"
+PSL_SUBMISSION_URL = "https://wiki.mozilla.org/Public_Suffix_List"
 
 
 @dataclass

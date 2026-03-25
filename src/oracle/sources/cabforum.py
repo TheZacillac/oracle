@@ -50,6 +50,11 @@ CABFORUM_SOURCES = {
         "url": "https://cabforum.org/bylaws/",
         "category": "ssl",
     },
+    "cabforum_ballots": {
+        "name": "CA/Browser Forum TLS Server Certificate Working Group Ballots",
+        "url": "https://cabforum.org/working-groups/tls/ballots/",
+        "category": "ssl",
+    },
 
     # ---- Certificate Transparency ----
     "ct_policy": {

@@ -50,8 +50,9 @@ IANA_URLS = {
     "rdap_asn_bootstrap": "https://data.iana.org/rdap/asn.json",
     "rdap_object_tags": "https://data.iana.org/rdap/object-tags.json",
 
-    # ---- WHOIS Servers ----
-    "whois_servers": "https://www.iana.org/domains/root/db",  # Each TLD page has WHOIS server info
+    # NOTE: whois_servers removed — it was a duplicate of root_db
+    # (same URL: https://www.iana.org/domains/root/db).
+    # WHOIS server info is available on each TLD's root_db page.
 
     # ---- Well-Known Services ----
     "service_names_csv": "https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.csv",
@@ -73,6 +74,10 @@ IANA_URLS = {
 
     # ---- EPP ----
     "epp_extensions": "https://www.iana.org/assignments/epp-extensions/epp-extensions.xhtml",
+
+    # ---- RDAP & DANE ----
+    "rdap_extensions": "https://www.iana.org/assignments/rdap-extensions/rdap-extensions.xhtml",
+    "dane_parameters": "https://www.iana.org/assignments/dane-parameters/dane-parameters.xhtml",
 }
 
 

@@ -168,11 +168,8 @@ ICANN_SOURCES = {
         "url": "https://newgtlds.icann.org/en/about/trademark-clearinghouse",
         "category": "blocking",
     },
-    "dpml_donuts": {
-        "name": "Domains Protected Marks List (DPML) by Identity Digital",
-        "url": "https://www.identitydigital.com/services/dpml",
-        "category": "blocking",
-    },
+    # NOTE: DPML (Identity Digital) moved to industry.py BRAND_PROTECTION_SOURCES
+    # — it's a commercial product page, not an ICANN policy document.
 
     # ---- ICANN Governance & Structure ----
     "icann_bylaws": {
@@ -235,11 +232,8 @@ ICANN_SOURCES = {
         "url": "https://www.iana.org/dnssec",
         "category": "iana",
     },
-    "iana_time_zones": {
-        "name": "IANA Time Zone Database",
-        "url": "https://www.iana.org/time-zones",
-        "category": "iana",
-    },
+    # NOTE: iana_time_zones removed — the time zone database has no relevance
+    # to domain names or DNS and would generate confusing training data.
     "icann_budget_ops": {
         "name": "ICANN Budget and Operations Plan",
         "url": "https://www.icann.org/resources/pages/governance/current-en",
@@ -296,11 +290,8 @@ ICANN_SOURCES = {
         "url": "https://eur-lex.europa.eu/eli/dir/2022/2555",
         "category": "compliance",
     },
-    "dns4eu": {
-        "name": "DNS4EU Initiative (JoinDNS4EU)",
-        "url": "https://joindns4.eu/",
-        "category": "compliance",
-    },
+    # NOTE: dns4eu moved to governance.py COMPLIANCE_SOURCES — it's an EU
+    # initiative website, not an ICANN document.
     "gdpr_full_text": {
         "name": "GDPR Full Text (EU 2016/679)",
         "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
@@ -365,7 +356,7 @@ ICANN_SOURCES = {
     "icann_compliance_overview": {
         "name": "ICANN Contractual Compliance Overview",
         "url": "https://www.icann.org/resources/pages/compliance-2012-02-25-en",
-        "category": "registrars",
+        "category": "icann",  # Applies to both registrars and registries
     },
     "consensus_policies": {
         "name": "ICANN Consensus Policies",

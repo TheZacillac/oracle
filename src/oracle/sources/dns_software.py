@@ -176,11 +176,9 @@ DNS_AUTOMATION_SOURCES = {
         "url": "https://github.com/barnybug/cli53",
         "category": "automation",
     },
-    "denominator": {
-        "name": "Denominator — Portable DNS Client (Netflix)",
-        "url": "https://github.com/Netflix/denominator",
-        "category": "automation",
-    },
+    # NOTE: denominator (Netflix) removed — project appears unmaintained
+    # (last commit years ago). Including abandoned projects risks generating
+    # outdated training content.
 }
 
 # =============================================================================
@@ -371,7 +369,7 @@ DNS_DEBUG_SOURCES = {
         "url": "https://mxtoolbox.com/",
         "category": "dns_tools",
     },
-    "dnscheck": {
+    "zonemaster": {
         "name": "Zonemaster — DNS Delegation Quality Checker (IIS/AFNIC)",
         "url": "https://www.zonemaster.net/",
         "category": "dns_tools",

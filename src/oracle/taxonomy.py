@@ -60,9 +60,9 @@ TAXONOMY: list[Category] = [
                 topics=[
                     Topic(
                         name="DNS architecture overview",
-                        description="Hierarchical namespace, distributed database, root-TLD-authoritative model.",
+                        description="Hierarchical namespace, distributed database, root-TLD-authoritative model. RFC 8499 is the authoritative DNS terminology reference.",
                         key_concepts=["hierarchical namespace", "distributed database", "root zone", "delegation", "authority"],
-                        rfcs=["RFC 1034", "RFC 1035"],
+                        rfcs=["RFC 1034", "RFC 1035", "RFC 8499"],
                     ),
                     Topic(
                         name="Name resolution process",
@@ -72,9 +72,9 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="DNS namespace and labels",
-                        description="Label rules, FQDN structure, maximum lengths, case insensitivity.",
+                        description="Label rules, FQDN structure, maximum lengths, case insensitivity. RFC 2181 clarifies multiple edge cases.",
                         key_concepts=["FQDN", "labels", "253-character limit", "63-character label limit", "case-insensitive"],
-                        rfcs=["RFC 1035", "RFC 4343"],
+                        rfcs=["RFC 1035", "RFC 2181", "RFC 4343"],
                     ),
                     Topic(
                         name="Zones and delegation",
@@ -84,8 +84,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="Root server system",
-                        description="13 root server identifiers, anycast, root zone management, priming.",
-                        key_concepts=["root servers", "anycast", "root hints", "priming query", "RSSAC"],
+                        description="13 root server identifiers (A-M), anycast, root zone management, priming. Over 1,500 anycast instances worldwide.",
+                        key_concepts=["root servers", "anycast", "root hints", "priming query", "RSSAC", "root server letters", "anycast instances"],
                         rfcs=["RFC 8109", "RFC 7720"],
                     ),
                     Topic(
@@ -96,9 +96,9 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="DNS message format",
-                        description="Header, question, answer, authority, additional sections, compression.",
+                        description="Header, question, answer, authority, additional sections, compression. RFC 2181 clarifies TTL interpretation, RDATA canonicalization, and other DNS edge cases.",
                         key_concepts=["header", "QR flag", "opcode", "RCODE", "message compression", "EDNS"],
-                        rfcs=["RFC 1035", "RFC 6895"],
+                        rfcs=["RFC 1035", "RFC 2181", "RFC 6895"],
                     ),
                 ],
             ),
@@ -212,9 +212,9 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="DNSSEC signing process",
-                        description="Zone signing, ZSK/KSK model, RRSIG generation, signature validity.",
-                        key_concepts=["ZSK", "KSK", "RRSIG", "signature inception", "expiration", "zone signing"],
-                        rfcs=["RFC 4034", "RFC 4035"],
+                        description="Zone signing, ZSK/KSK model, RRSIG generation, signature validity. Online vs offline signing: online signing keeps the KSK always available; offline signing uses air-gapped HSMs with periodic re-signing.",
+                        key_concepts=["ZSK", "KSK", "RRSIG", "signature inception", "expiration", "zone signing", "online signing", "offline signing", "HSM"],
+                        rfcs=["RFC 4034", "RFC 4035", "RFC 6781"],
                     ),
                     Topic(
                         name="DNSSEC validation",
@@ -224,8 +224,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="NSEC and NSEC3",
-                        description="Authenticated denial of existence, zone walking, opt-out.",
-                        key_concepts=["NSEC", "NSEC3", "NSEC3PARAM", "zone walking", "opt-out", "white lies"],
+                        description="Authenticated denial of existence, zone walking, opt-out. NSEC5 is a newer proposal to prevent offline dictionary attacks against NSEC3.",
+                        key_concepts=["NSEC", "NSEC3", "NSEC3PARAM", "zone walking", "opt-out", "white lies", "NSEC5"],
                         rfcs=["RFC 4034", "RFC 5155"],
                     ),
                     Topic(
@@ -240,6 +240,20 @@ TAXONOMY: list[Category] = [
                         key_concepts=["response size", "UDP truncation", "middlebox interference", "adoption rate"],
                         rfcs=["RFC 6781"],
                         difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="DNSSEC algorithm selection and deprecation",
+                        description="Algorithm recommendation matrix per RFC 8624. RSA/SHA-1 (algorithms 5, 7) deprecated. ECDSA P-256 (algorithm 13) is current recommendation. Ed25519 (algorithm 15) and Ed448 (algorithm 16) for future. HSM considerations for algorithm choice.",
+                        key_concepts=["algorithm 8", "algorithm 13", "algorithm 15", "RFC 8624", "ECDSA P-256", "Ed25519", "RSA deprecation", "MUST NOT sign"],
+                        rfcs=["RFC 8624"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="CDS/CDNSKEY automated DNSSEC delegation",
+                        description="Automated DNSSEC delegation maintenance using CDS and CDNSKEY records. Child-to-parent signaling for DS record updates. RFC 7344 defines the mechanism, RFC 8078 defines the bootstrapping process. Reduces operational burden of DNSSEC key management.",
+                        key_concepts=["CDS", "CDNSKEY", "automated delegation", "DS record updates", "child-to-parent signaling", "DNSSEC bootstrapping"],
+                        rfcs=["RFC 7344", "RFC 8078"],
+                        difficulty_range=("advanced", "expert"),
                     ),
                 ],
             ),
@@ -257,8 +271,9 @@ TAXONOMY: list[Category] = [
                     Topic(
                         name="DNS over HTTPS (DoH)",
                         description="DNS queries over HTTPS, privacy, bypassing, content-type, wire format.",
-                        key_concepts=["DoH", "HTTPS", "privacy", "content-type", "RFC 8484", "centralization concerns"],
+                        key_concepts=["DoH", "HTTPS", "privacy", "content-type", "centralization concerns", "application/dns-message"],
                         rfcs=["RFC 8484"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                     Topic(
                         name="DNS over TLS (DoT)",
@@ -281,8 +296,8 @@ TAXONOMY: list[Category] = [
                 topics=[
                     Topic(
                         name="EDNS(0)",
-                        description="Extension mechanisms for DNS, larger UDP, OPT record, options.",
-                        key_concepts=["EDNS0", "OPT record", "UDP payload size", "extended RCODE", "version"],
+                        description="Extension mechanisms for DNS, larger UDP, OPT record, options. The DO bit (DNSSEC OK) enables DNSSEC validation.",
+                        key_concepts=["EDNS0", "OPT record", "UDP payload size", "extended RCODE", "version", "DO bit"],
                         rfcs=["RFC 6891"],
                     ),
                     Topic(
@@ -313,7 +328,7 @@ TAXONOMY: list[Category] = [
                     Topic(
                         name="Cache poisoning",
                         description="Kaminsky attack, birthday attacks, source port randomization, DNSSEC mitigation.",
-                        key_concepts=["cache poisoning", "Kaminsky attack", "source port randomization", "TXID"],
+                        key_concepts=["cache poisoning", "Kaminsky attack", "source port randomization", "TXID", "bailiwick checking"],
                         rfcs=["RFC 5452"],
                         difficulty_range=("intermediate", "expert"),
                     ),
@@ -367,6 +382,13 @@ TAXONOMY: list[Category] = [
                         key_concepts=["anycast", "BGP", "load distribution", "resilience", "catchment"],
                         difficulty_range=("advanced", "expert"),
                     ),
+                    Topic(
+                        name="ZONEMD (Zone Message Digest)",
+                        description="Zone file integrity verification via a cryptographic digest stored in a DNS record. Growing in importance for signed zone distribution and offline zone file validation.",
+                        key_concepts=["ZONEMD", "zone digest", "integrity verification", "zone distribution", "cryptographic hash"],
+                        rfcs=["RFC 8976"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
                 ],
             ),
             Subcategory(
@@ -405,6 +427,12 @@ TAXONOMY: list[Category] = [
                         rfcs=["RFC 9230"],
                         difficulty_range=("advanced", "expert"),
                     ),
+                    Topic(
+                        name="DNS privacy in practice: trade-offs and deployment",
+                        description="Synthesizing QNAME minimisation, DoH/DoT, and ECS into a practical privacy view. Real-world privacy trade-offs between performance (ECS for CDN routing) and privacy (minimisation).",
+                        key_concepts=["privacy trade-offs", "QNAME minimisation + DoH", "ECS privacy cost", "practical privacy", "deployment choices"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
                 ],
             ),
         ],
@@ -429,8 +457,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="Grace periods",
-                        description="Add grace, renew grace, auto-renew grace, transfer grace, redemption grace period.",
-                        key_concepts=["AGP", "renew grace", "auto-renew grace", "transfer grace", "RGP", "ICANN policy"],
+                        description="Add grace, renew grace, auto-renew grace, transfer grace, redemption grace period. ERRP (Expired Registration Recovery Policy) covers 40-day redemption period notification requirements.",
+                        key_concepts=["AGP", "renew grace", "auto-renew grace", "transfer grace", "RGP", "ICANN policy", "ERRP"],
                     ),
                     Topic(
                         name="Domain expiry and redemption",
@@ -461,8 +489,14 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="Transfer restrictions",
-                        description="60-day lock after registration/transfer, registrar lock, transfer disputes.",
-                        key_concepts=["60-day lock", "transfer lock", "TDRP", "transfer dispute"],
+                        description="60-day lock after registration/transfer, registrar lock, transfer disputes. Many ccTLDs have different transfer rules (no auth code, different lock periods).",
+                        key_concepts=["60-day lock", "transfer lock", "TDRP", "transfer dispute", "ccTLD transfer rules"],
+                    ),
+                    Topic(
+                        name="Transfer fraud and hijacking risks",
+                        description="Vulnerabilities in the transfer process: registrar social engineering, unauthorized transfer initiation, auth code theft. Case studies of domain hijacking via transfer fraud.",
+                        key_concepts=["transfer fraud", "social engineering", "unauthorized transfer", "auth code theft", "registrar verification"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                     Topic(
                         name="Change of registrant (IRTP-C)",
@@ -484,9 +518,9 @@ TAXONOMY: list[Category] = [
                 topics=[
                     Topic(
                         name="EPP overview",
-                        description="Client-server protocol for provisioning, object types, transport.",
-                        key_concepts=["EPP", "provisioning", "XML", "TLS transport", "RFC 5730"],
-                        rfcs=["RFC 5730"],
+                        description="Client-server protocol for provisioning, object types, transport over TCP/TLS.",
+                        key_concepts=["EPP", "provisioning", "XML", "TLS transport", "TCP/TLS"],
+                        rfcs=["RFC 5730", "RFC 5734"],
                     ),
                     Topic(
                         name="EPP domain operations",
@@ -615,8 +649,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="Brand TLDs",
-                        description="Corporate brand TLDs (.google, .amazon, .apple), spec 13, operational models.",
-                        key_concepts=["brand TLD", ".brand", "spec 13", "closed generic", "defensive TLD"],
+                        description="Corporate brand TLDs (.google, .amazon, .apple), spec 13, operational models. Fully closed registries (only the brand's own domains), Specification 13 requirements differ from open registries, some brands use their TLD internally only.",
+                        key_concepts=["brand TLD", ".brand", "spec 13", "closed generic", "defensive TLD", "closed registry", "internal-only TLD", "dotBrand operational model"],
                         difficulty_range=("intermediate", "expert"),
                     ),
                     Topic(
@@ -639,18 +673,18 @@ TAXONOMY: list[Category] = [
                 topics=[
                     Topic(
                         name="Registry operator role",
-                        description="SRS operation, zone generation, WHOIS/RDAP, abuse handling.",
-                        key_concepts=["registry operator", "SRS", "shared registration system", "zone file", "escrow"],
+                        description="SRS operation, zone generation, WHOIS/RDAP, abuse handling. SRS is specific to gTLDs with multiple registrars; ccTLDs with direct registration models may not use this architecture.",
+                        key_concepts=["registry operator", "SRS", "shared registration system", "zone file", "escrow", "direct registration model"],
                     ),
                     Topic(
                         name="Registry agreements with ICANN",
-                        description="Base Registry Agreement, specifications, amendments, renewals.",
-                        key_concepts=["Registry Agreement", "base agreement", "specification 1-13", "PIR", "Verisign"],
+                        description="Base Registry Agreement, specifications (Spec 4: registration data, Spec 6: registry services, Spec 13: brand TLDs), amendments, renewals.",
+                        key_concepts=["Registry Agreement", "base agreement", "specification 1-13", "Spec 4", "Spec 6", "Spec 13", "PIR", "Verisign"],
                     ),
                     Topic(
                         name="Registry data escrow",
                         description="Data escrow requirements, ICANN-approved escrow agents, escrow format.",
-                        key_concepts=["data escrow", "escrow agent", "RDE", "ICANN specification 2"],
+                        key_concepts=["data escrow", "ICANN-approved escrow agents", "Iron Mountain", "RDE", "ICANN specification 2"],
                     ),
                     Topic(
                         name="Emergency back-end registry operators (EBERO)",
@@ -687,6 +721,17 @@ TAXONOMY: list[Category] = [
                         key_concepts=["delegation", "redelegation", "RFC 1591", "GAC principles", "significantly interested parties"],
                         rfcs=["RFC 1591"],
                         difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="New gTLD objection procedures",
+                        description="Four types of objections in new gTLD applications: Legal Rights Objection, Community Objection, Limited Public Interest Objection, and String Confusion Objection. Panel processes and outcomes.",
+                        key_concepts=["Legal Rights Objection", "Community Objection", "Limited Public Interest", "String Confusion", "objection panel", "ICDR", "ICC"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="New gTLD Round 2 (Subsequent Procedures)",
+                        description="ICANN's next round of new gTLD applications based on the SubPro PDP recommendations. Changes from Round 1: updated applicant guidebook, revised auction mechanisms, enhanced GAC advice processes, geographic name protections, closed generic restrictions, application fees and timeline.",
+                        key_concepts=["SubPro", "Round 2", "applicant guidebook v2", "auction mechanisms", "GAC advice", "geographic names", "closed generics", "application timeline"],
                     ),
                     Topic(
                         name="TLD abuse rates and reputation",
@@ -742,6 +787,12 @@ TAXONOMY: list[Category] = [
                         key_concepts=["reseller", "registrar of record", "reseller accountability"],
                     ),
                     Topic(
+                        name="Registrar mergers and acquisitions",
+                        description="Industry consolidation: GoDaddy acquiring smaller registrars, Tucows acquiring Enom, Squarespace acquiring Google Domains. Implications for domain holders: service migration, policy changes, portfolio continuity.",
+                        key_concepts=["registrar M&A", "acquisition", "consolidation", "service migration", "portfolio continuity", "Google Domains to Squarespace"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
                         name="Thick vs thin registry model",
                         description="Where registration data is stored, thick WHOIS transition.",
                         key_concepts=["thick registry", "thin registry", "thick WHOIS", "data storage", "Verisign transition"],
@@ -765,8 +816,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="ICANN contractual compliance",
-                        description="Compliance audits, enforcement actions, breach notices, termination.",
-                        key_concepts=["compliance", "audit", "breach notice", "enforcement", "ICANN compliance"],
+                        description="Compliance audits, enforcement actions, breach notices, termination. Includes registrar suspension and revocation processes for portfolio continuity planning.",
+                        key_concepts=["compliance", "audit", "breach notice", "enforcement", "ICANN compliance", "accreditation termination", "registrar suspension"],
                         difficulty_range=("advanced", "expert"),
                     ),
                 ],
@@ -906,7 +957,7 @@ TAXONOMY: list[Category] = [
                         name="Corporate domain portfolio management",
                         description="Managing large domain portfolios: consolidation strategies, renewal optimization, defensive registration audits, cost rationalization, reporting and analytics, compliance workflows, multi-stakeholder governance.",
                         key_concepts=["portfolio management", "consolidation", "renewal optimization", "defensive audit", "cost rationalization", "compliance workflow", "stakeholder governance"],
-                        difficulty_range=("intermediate", "expert"),
+                        difficulty_range=("beginner", "expert"),
                     ),
                 ],
             ),
@@ -932,8 +983,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="GNSO (Generic Names Supporting Organization)",
-                        description="Policy development for gTLDs, council, stakeholder groups, constituencies.",
-                        key_concepts=["GNSO", "GNSO Council", "registrar stakeholder group", "registry stakeholder group", "IPC", "NCSG"],
+                        description="Policy development for gTLDs, council, stakeholder groups, constituencies. Split between contracted parties (registrars, registries) and non-contracted parties (IPC, NCSG, BC).",
+                        key_concepts=["GNSO", "GNSO Council", "registrar stakeholder group", "registry stakeholder group", "IPC", "NCSG", "contracted parties", "non-contracted parties", "house votes", "supermajority"],
                     ),
                     Topic(
                         name="ccNSO (Country Code Names Supporting Organization)",
@@ -947,8 +998,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="ALAC (At-Large Advisory Committee)",
-                        description="End user representation, RALOs, At-Large community.",
-                        key_concepts=["ALAC", "At-Large", "RALO", "end users", "individual interests"],
+                        description="End user representation, five RALOs (regional At-Large organizations), At-Large community.",
+                        key_concepts=["ALAC", "At-Large", "RALO", "end users", "individual interests", "NARALO", "EURALO", "APRALO", "LACRALO", "AFRALO"],
                     ),
                     Topic(
                         name="SSAC and RSSAC",
@@ -981,6 +1032,12 @@ TAXONOMY: list[Category] = [
                         name="Public comment and review mechanisms",
                         description="Public comment periods, independent review, reconsideration, ombudsman.",
                         key_concepts=["public comment", "review", "reconsideration", "ombudsman", "accountability"],
+                    ),
+                    Topic(
+                        name="Cross-community working groups (CCWGs)",
+                        description="How ICANN handles cross-constituency issues. CCWG-Accountability designed the IANA transition accountability mechanisms. CCWGs bring together multiple SOs and ACs.",
+                        key_concepts=["CCWG", "CCWG-Accountability", "cross-constituency", "IANA transition", "accountability mechanisms"],
+                        difficulty_range=("advanced", "expert"),
                     ),
                 ],
             ),
@@ -1073,8 +1130,15 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="Protocol parameter registries",
-                        description="DNS parameters registry, RR types, opcodes, RCODEs, EDNS option codes.",
-                        key_concepts=["DNS parameters", "RR type registry", "opcode", "RCODE", "EDNS option code"],
+                        description="DNS parameters registry, RR types, opcodes, RCODEs, EDNS option codes. Assignment policies: First Come First Served, IETF Review, Standards Action.",
+                        key_concepts=["DNS parameters", "RR type registry", "opcode", "RCODE", "EDNS option code", "assignment policy", "IETF Review", "Standards Action"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="Root zone KSK rollover",
+                        description="History and process of the 2018 root zone KSK rollover from KSK-2010 to KSK-2017. Why it was delayed (insufficient DNSSEC resolver data). Impact on ISP resolvers. RSSAC023 guidance. Future rollover planning and automation. Significance for DNSSEC trust chain.",
+                        key_concepts=["2018 KSK rollover", "KSK-2010", "KSK-2017", "delay reasons", "resolver impact", "RSSAC023", "trust anchor", "key ceremony"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                 ],
             ),
@@ -1171,6 +1235,19 @@ TAXONOMY: list[Category] = [
                         key_concepts=["authentication", "differentiated access", "tiered access", "EPDP"],
                         rfcs=["RFC 7481"],
                     ),
+                    Topic(
+                        name="RDAP profiles and extensions",
+                        description="ICANN gTLD RDAP profile mandates specific fields and extensions beyond the base RFC. Federated RDAP, partial search, redacted fields. Critical for building RDAP clients.",
+                        key_concepts=["gTLD RDAP profile", "RDAP extensions", "redacted fields", "federated RDAP", "partial search"],
+                        rfcs=["RFC 9537"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="WHOIS rate limiting and query restrictions",
+                        description="Registries and registrars rate-limit WHOIS queries significantly. Tor/proxy blocking, decline of bulk WHOIS access, practical implications for domain research.",
+                        key_concepts=["WHOIS rate limiting", "query restrictions", "Tor blocking", "bulk WHOIS decline", "abuse prevention"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
                 ],
             ),
             Subcategory(
@@ -1192,6 +1269,12 @@ TAXONOMY: list[Category] = [
                         name="WHOIS accuracy requirements",
                         description="RAA accuracy obligations, WDRP, validation/verification, inaccuracy complaints.",
                         key_concepts=["accuracy", "WDRP", "validation", "verification", "inaccuracy complaint"],
+                    ),
+                    Topic(
+                        name="SSAD (System for Standardized Access/Disclosure)",
+                        description="Phase 2 EPDP output creating a gated access system for non-public registration data. Standardized request/response process for legitimate access to redacted WHOIS/RDAP data.",
+                        key_concepts=["SSAD", "gated access", "EPDP Phase 2", "standardized disclosure", "non-public data", "accreditation"],
+                        difficulty_range=("advanced", "expert"),
                     ),
                 ],
             ),
@@ -1279,8 +1362,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="Registry lock services",
-                        description="Server-side lock requiring manual, out-of-band verification for any domain changes. Registry lock sets serverTransferProhibited, serverUpdateProhibited, and serverDeleteProhibited statuses. The process for activating and deactivating locks, operational procedures, which registries support it, corporate registrar lock implementations (CSC MultiLock, MarkMonitor registry lock).",
-                        key_concepts=["registry lock", "serverDeleteProhibited", "serverTransferProhibited", "serverUpdateProhibited", "out-of-band verification", "CSC MultiLock", "manual unlock", "high-value domain protection"],
+                        description="Server-side lock requiring manual, out-of-band verification (phone call/fax/in-person) for any domain changes. Registry lock sets serverTransferProhibited, serverUpdateProhibited, and serverDeleteProhibited statuses. The process for activating and deactivating locks, operational procedures, which registries support it, corporate registrar lock implementations (CSC MultiLock, MarkMonitor registry lock).",
+                        key_concepts=["registry lock", "serverDeleteProhibited", "serverTransferProhibited", "serverUpdateProhibited", "out-of-band verification", "phone/fax verification", "CSC MultiLock", "manual unlock", "high-value domain protection"],
                         difficulty_range=("intermediate", "expert"),
                     ),
                 ],
@@ -1363,6 +1446,18 @@ TAXONOMY: list[Category] = [
                         description="WIPO, NAF, ADNDRC, CAC — approved providers and their roles.",
                         key_concepts=["WIPO Arbitration Center", "NAF", "ADNDRC", "CAC", "provider rules"],
                     ),
+                    Topic(
+                        name="UDRP panels and panelist selection",
+                        description="Panel composition: single vs three-member panels, how panelists are appointed, panelist selection strategy, panelist bias concerns and statistics.",
+                        key_concepts=["single panelist", "three-member panel", "panelist appointment", "panelist selection", "panelist bias", "respondent selection"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="UDRP jurisprudence on new gTLDs",
+                        description="Application of existing UDRP precedents to new gTLDs. Generic term disputes (.app, .shop), whether the TLD itself adds meaning, geographic terms in new gTLDs.",
+                        key_concepts=["new gTLD UDRP", "generic term disputes", "TLD meaning", "geographic TLD disputes", "precedent applicability"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
                 ],
             ),
             Subcategory(
@@ -1423,6 +1518,24 @@ TAXONOMY: list[Category] = [
                         name="Trademark dilution and domain names",
                         description="Dilution claims (blurring/tarnishment) in domain disputes, relationship to UDRP.",
                         key_concepts=["dilution", "blurring", "tarnishment", "famous marks", "TDRA"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="TDRP (Transfer Dispute Resolution Policy)",
+                        description="ICANN policy for disputing improper domain transfers. Available when a domain has been transferred without proper authorization. Distinct from UDRP which addresses trademark disputes.",
+                        key_concepts=["TDRP", "transfer dispute", "improper transfer", "unauthorized transfer", "ICANN policy"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="PDDRP (Post-Delegation Dispute Resolution)",
+                        description="Procedure for challenging registry operators' conduct after TLD delegation. Available to trademark holders and others who believe a registry operator is causing harm through its practices.",
+                        key_concepts=["PDDRP", "post-delegation", "registry operator conduct", "trademark harm", "registry challenge"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="ccTLD dispute resolution variation",
+                        description="Significant variation in ccTLD dispute mechanisms: some use UDRP equivalents, others have no formal dispute mechanism, some rely entirely on national court jurisdiction.",
+                        key_concepts=["ccTLD DRP variation", "no dispute mechanism", "national courts", "UDRP equivalent", "jurisdictional differences"],
                         difficulty_range=("advanced", "expert"),
                     ),
                 ],
@@ -1510,8 +1623,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="Certificate renewal and automation",
-                        description="Renewal process, ACME automation, certificate lifetime trends (90-day, 47-day).",
-                        key_concepts=["renewal", "automation", "ACME", "short-lived certificates", "47-day proposal"],
+                        description="Renewal process, ACME automation, certificate lifetime trends (90-day, 47-day). CA/B Forum ballot SC-081 and the industry debate on maximum lifetimes.",
+                        key_concepts=["renewal", "automation", "ACME", "short-lived certificates", "47-day proposal", "SC-081", "lifetime reduction"],
                     ),
                     Topic(
                         name="Certificate revocation",
@@ -1540,6 +1653,19 @@ TAXONOMY: list[Category] = [
                         description="S/MIME, code signing, client certificates, IoT certificates — PKI breadth as it relates to domains.",
                         key_concepts=["S/MIME", "code signing", "client certificate", "IoT PKI", "private PKI"],
                         difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="DANE for HTTPS",
+                        description="Using DNSSEC-validated TLSA records for web server certificate authentication. Provides an alternative trust path independent of the traditional CA model.",
+                        key_concepts=["DANE HTTPS", "TLSA", "certificate association", "CA-independent trust", "DNSSEC dependency"],
+                        rfcs=["RFC 7671", "RFC 6698"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="Post-quantum cryptography and TLS",
+                        description="Industry transition to post-quantum algorithms. NIST selections (FIPS 203 ML-KEM, FIPS 204 ML-DSA) appearing in certificate profiles. Impact on TLS handshake sizes and performance.",
+                        key_concepts=["post-quantum TLS", "ML-KEM", "ML-DSA", "FIPS 203", "FIPS 204", "quantum-safe certificates", "hybrid key exchange"],
+                        difficulty_range=("advanced", "expert"),
                     ),
                 ],
             ),
@@ -1582,6 +1708,24 @@ TAXONOMY: list[Category] = [
                         name="Domain tasting and front-running",
                         description="Exploiting AGP for testing, allegations of query-based front-running.",
                         key_concepts=["domain tasting", "AGP abuse", "front-running", "ICANN AGP limits"],
+                    ),
+                    Topic(
+                        name="Bitsquatting",
+                        description="Attack where single-bit memory errors in client hardware lead users to unintended domains. Documented attack category targeting high-traffic domains.",
+                        key_concepts=["bitsquatting", "bit-flip", "memory error", "hardware fault", "high-traffic targets"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="Subdomain takeover as brand threat",
+                        description="Dangling CNAME records pointing to unclaimed cloud services create subdomain takeover opportunities that directly impact brand reputation and trust.",
+                        key_concepts=["subdomain takeover", "dangling CNAME", "brand reputation", "cloud service takeover", "trust abuse"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="AI-generated lookalike domains",
+                        description="Rapidly growing attack vector using AI/LLMs to generate convincing phishing domains at scale. Goes beyond traditional DGA by creating human-plausible brand impersonations.",
+                        key_concepts=["AI domain generation", "LLM phishing", "automated impersonation", "scalable attacks", "AI brand abuse"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                 ],
             ),
@@ -1628,8 +1772,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="Industry-specific brand protection",
-                        description="Brand protection strategies tailored to pharma, finance, luxury, and tech sectors.",
-                        key_concepts=["pharma", "finance", "luxury brands", "tech", "industry-specific", "regulatory overlay"],
+                        description="Brand protection strategies tailored to pharma, finance, luxury, and tech sectors. Regulated industries have specific requirements (FDA/FCA domain compliance).",
+                        key_concepts=["pharma", "finance", "luxury brands", "tech", "industry-specific", "regulatory overlay", "regulated industry requirements", "FDA/FCA domain compliance"],
                         difficulty_range=("intermediate", "expert"),
                     ),
                 ],
@@ -1673,6 +1817,13 @@ TAXONOMY: list[Category] = [
                         name="DNS-based DDoS",
                         description="DNS amplification, water torture attacks, NXDOMAIN floods.",
                         key_concepts=["DNS amplification", "water torture", "NXDOMAIN flood", "random subdomain attack"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="Fast flux networks",
+                        description="Evasion technique using rapidly changing DNS records to hide malicious infrastructure. Single-flux (rotating A records) and double-flux (rotating both A and NS records). Distinct detection characteristics.",
+                        key_concepts=["fast flux", "single-flux", "double-flux", "rapid DNS changes", "flux detection", "bulletproof hosting"],
+                        difficulty_range=("advanced", "expert"),
                     ),
                 ],
             ),
@@ -1722,6 +1873,12 @@ TAXONOMY: list[Category] = [
                         description="Using resolver-level filtering (Quad9, CISA Protective DNS) to block known-bad domains.",
                         key_concepts=["protective DNS", "Quad9", "CISA", "resolver filtering", "threat feed integration"],
                     ),
+                    Topic(
+                        name="DNSSEC amplification as a DDoS vector",
+                        description="Large DNSSEC-signed responses are particularly effective DDoS amplifiers due to RRSIG, DNSKEY, and DS records increasing response size. Intersection of DNSSEC deployment and amplification risk.",
+                        key_concepts=["DNSSEC amplification", "large responses", "RRSIG size", "DNSKEY amplification", "response size ratio"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
                 ],
             ),
         ],
@@ -1758,14 +1915,20 @@ TAXONOMY: list[Category] = [
                         rfcs=["RFC 7489"],
                     ),
                     Topic(
+                        name="DMARC aggregate reporting (RUA)",
+                        description="XML report format for DMARC aggregate reports. How to parse reports, what they tell about email stream health, report processors, and volume analysis.",
+                        key_concepts=["DMARC-RUA", "aggregate report", "XML format", "report parsing", "email stream health", "report processors"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
                         name="BIMI (Brand Indicators for Message Identification)",
-                        description="Brand logo display in email clients, VMC certificates, DNS TXT record.",
-                        key_concepts=["BIMI", "VMC", "brand logo", "default._bimi", "verified mark certificate"],
+                        description="Brand logo display in email clients, VMC certificates, DNS TXT record. Logo must be SVG Tiny 1.2 format.",
+                        key_concepts=["BIMI", "VMC", "brand logo", "default._bimi", "verified mark certificate", "SVG Tiny 1.2"],
                     ),
                     Topic(
                         name="ARC (Authenticated Received Chain)",
-                        description="Preserving authentication through indirect mail flows, mailing lists.",
-                        key_concepts=["ARC", "ARC-Seal", "ARC-Message-Signature", "ARC-Authentication-Results"],
+                        description="Preserving authentication through indirect mail flows, particularly mailing list forwarding.",
+                        key_concepts=["ARC", "ARC-Seal", "ARC-Message-Signature", "ARC-Authentication-Results", "mailing list forwarding"],
                         rfcs=["RFC 8617"],
                     ),
                     Topic(
@@ -1775,10 +1938,20 @@ TAXONOMY: list[Category] = [
                         rfcs=["RFC 8461"],
                     ),
                     Topic(
+                        name="SMTP STARTTLS and opportunistic TLS",
+                        description="Baseline SMTP TLS behavior: STARTTLS is opportunistic and downgrade-susceptible. Distinction from MTA-STS enforced TLS. Foundational email-DNS knowledge.",
+                        key_concepts=["STARTTLS", "opportunistic TLS", "downgrade attack", "SMTP encryption", "implicit TLS", "port 465 vs 587"],
+                    ),
+                    Topic(
                         name="DANE for email (TLSA)",
                         description="Using DNSSEC-validated TLSA records for SMTP TLS verification.",
                         key_concepts=["DANE", "TLSA", "SMTP DANE", "certificate pinning via DNS"],
                         rfcs=["RFC 7672"],
+                    ),
+                    Topic(
+                        name="Google/Yahoo bulk sender requirements (2024+)",
+                        description="New requirements for bulk email senders (5,000+ messages/day to Gmail/Yahoo): mandatory SPF and DKIM authentication, DMARC policy (at minimum p=none), one-click unsubscribe via List-Unsubscribe header, spam rate threshold below 0.3%. Impact on domain DNS configuration and email deliverability.",
+                        key_concepts=["bulk sender requirements", "5000 messages/day", "p=none minimum", "one-click unsubscribe", "List-Unsubscribe", "spam rate threshold", "0.3% complaint rate", "Gmail requirements", "Yahoo requirements"],
                     ),
                 ],
             ),
@@ -1872,11 +2045,23 @@ TAXONOMY: list[Category] = [
                         name="Domain investment strategies",
                         description="Domain investing as an asset class, portfolio building, holding costs, exit strategies.",
                         key_concepts=["domain investing", "domaining", "portfolio building", "holding cost", "ROI", "exit strategy"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                     Topic(
                         name="Drop catching and backorder services",
                         description="Automated capture of expiring domains, backorder platforms, auction mechanics.",
                         key_concepts=["drop catching", "backorder", "pending delete", "SnapNames", "NameJet", "timing"],
+                    ),
+                    Topic(
+                        name="Domain escrow services",
+                        description="Third-party escrow for domain transactions. Escrow.com is the ICANN-approved escrow for domain sales. Process steps: buyer deposits, seller transfers, buyer confirms, funds released.",
+                        key_concepts=["domain escrow", "Escrow.com", "ICANN-approved", "buyer protection", "seller protection", "transaction process"],
+                    ),
+                    Topic(
+                        name="Domain name as intellectual property",
+                        description="How domains are classified as assets, treatment in bankruptcy proceedings, status in corporate acquisitions and M&A due diligence.",
+                        key_concepts=["domain as asset", "intellectual property", "bankruptcy", "corporate acquisition", "M&A due diligence", "asset valuation"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                 ],
             ),
@@ -1912,13 +2097,19 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="Domain parking and default pages",
-                        description="Registrar and hosting parking pages, under construction, holding pages.",
-                        key_concepts=["parking page", "default page", "holding page", "registrar parking", "PPC parking"],
+                        description="Registrar and hosting parking pages, under construction, holding pages. Distinct from aftermarket parking which focuses on domain monetization.",
+                        key_concepts=["parking page", "default page", "holding page", "registrar parking", "hosting default", "under construction"],
                     ),
                     Topic(
                         name="Static site hosting and DNS",
                         description="GitHub Pages, Netlify, Vercel, S3 — DNS patterns for static hosting platforms.",
                         key_concepts=["GitHub Pages", "Netlify", "Vercel", "S3 static hosting", "CNAME flattening"],
+                    ),
+                    Topic(
+                        name="IPv6-only hosting and DNS considerations",
+                        description="DNS challenges with IPv6-only hosting: AAAA record requirements, Happy Eyeballs behavior, IPv6 reverse DNS, dual-stack fallback considerations.",
+                        key_concepts=["IPv6-only hosting", "AAAA records", "Happy Eyeballs", "IPv6 rDNS", "dual-stack", "NAT64"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                 ],
             ),
@@ -2183,8 +2374,20 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="W3C and web standards relating to domains",
-                        description="URL standards, origin model, same-origin policy, public suffix list.",
-                        key_concepts=["W3C", "URL spec", "origin", "same-origin policy", "public suffix list", "eTLD+1"],
+                        description="URL standards, origin model, same-origin policy, public suffix list. The WHATWG URL Standard (not W3C) is what browsers actually implement for URL parsing.",
+                        key_concepts=["W3C", "URL spec", "origin", "same-origin policy", "public suffix list", "eTLD+1", "WHATWG URL Standard"],
+                    ),
+                    Topic(
+                        name="IETF working group participation",
+                        description="How to participate in IETF: mailing lists, datatracker, in-person meetings. Difference between contributor and WG chair. How rough consensus is reached.",
+                        key_concepts=["IETF participation", "mailing lists", "datatracker", "WG chair", "rough consensus", "hum", "last call"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="ISO 3166 and country codes",
+                        description="ISO 3166-1 alpha-2 codes underlie the ccTLD namespace. How country codes become ccTLD candidates, special cases (.uk vs .gb, .eu as regional TLD).",
+                        key_concepts=["ISO 3166-1", "alpha-2 codes", "ccTLD mapping", ".uk vs .gb", ".eu regional", "country code assignment"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                 ],
             ),
@@ -2207,6 +2410,12 @@ TAXONOMY: list[Category] = [
                         name="RIR policy development",
                         description="Bottom-up policy process, policy proposals, regional meetings.",
                         key_concepts=["RIR PDP", "policy proposal", "regional meetings", "community consensus"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="RPKI and BGP security",
+                        description="Resource Public Key Infrastructure managed by RIRs for routing security. ROA (Route Origin Authorization) prevents BGP hijacking. Increasingly relevant to DNS infrastructure security.",
+                        key_concepts=["RPKI", "ROA", "Route Origin Authorization", "BGP hijacking prevention", "ARIN RPKI", "RIPE RPKI"],
                         difficulty_range=("advanced", "expert"),
                     ),
                 ],
@@ -2279,8 +2488,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="DNS infrastructure attacks",
-                        description="Attacks against DNS servers, zone poisoning, BGP hijacking of DNS traffic.",
-                        key_concepts=["DNS server attack", "zone poisoning", "BGP hijack", "NS record manipulation"],
+                        description="Attacks against DNS servers, zone poisoning, BGP hijacking of DNS traffic. Notable incidents: 2010 China Telecom BGP hijack, 2019 BGP hijacks affecting Amazon Route 53.",
+                        key_concepts=["DNS server attack", "zone poisoning", "BGP hijack", "NS record manipulation", "route hijacking", "Route 53 incident"],
                         difficulty_range=("advanced", "expert"),
                     ),
                     Topic(
@@ -2369,6 +2578,7 @@ TAXONOMY: list[Category] = [
                         name="NIS2 directive and DNS operators",
                         description="EU Network and Information Security Directive 2, obligations for DNS providers and TLD registries.",
                         key_concepts=["NIS2", "essential entities", "DNS service providers", "incident reporting", "security measures"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                     Topic(
                         name="DNS4EU initiative",
@@ -2435,8 +2645,14 @@ TAXONOMY: list[Category] = [
                 topics=[
                     Topic(
                         name="GDPR impact on domain services",
-                        description="GDPR beyond WHOIS — consent, data processing, DPAs, registrar obligations.",
-                        key_concepts=["GDPR", "data controller", "data processor", "DPA", "consent", "legitimate interest"],
+                        description="GDPR beyond WHOIS — consent, data processing, DPAs, registrar obligations. Article 28 requires DPAs between registrars and their customers, and between registrars and ICANN.",
+                        key_concepts=["GDPR", "data controller", "data processor", "DPA", "consent", "legitimate interest", "Article 28"],
+                    ),
+                    Topic(
+                        name="GDPR right to erasure vs WHOIS retention",
+                        description="Conflict between GDPR Article 17 right to erasure and ICANN's WHOIS retention requirements (RAA requires 2-year post-expiry retention). A specific compliance tension for registrars.",
+                        key_concepts=["right to erasure", "Article 17", "WHOIS retention", "RAA retention", "2-year post-expiry", "compliance conflict"],
+                        difficulty_range=("advanced", "expert"),
                     ),
                     Topic(
                         name="CCPA and domain registrations",
@@ -2500,6 +2716,12 @@ TAXONOMY: list[Category] = [
                         key_concepts=["traffic baseline", "anomaly detection", "capacity planning", "query volume trends"],
                         difficulty_range=("intermediate", "expert"),
                     ),
+                    Topic(
+                        name="DNSTAP protocol",
+                        description="Standard binary logging format for DNS servers, replacing older text-based logging. How to configure and use DNSTAP for high-performance DNS query capture and analysis.",
+                        key_concepts=["DNSTAP", "binary logging", "DNS capture", "protobuf", "Frame Streams", "high-performance logging"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
                 ],
             ),
             Subcategory(
@@ -2549,6 +2771,12 @@ TAXONOMY: list[Category] = [
                         name="Historical DNS records and analysis",
                         description="Tracking DNS changes over time, ownership analysis, infrastructure evolution.",
                         key_concepts=["historical DNS", "DNS history", "ownership changes", "infrastructure tracking"],
+                    ),
+                    Topic(
+                        name="ICANN CZDS (Centralized Zone Data Service)",
+                        description="Zone file access for research and monitoring. CZDS provides bulk access to gTLD zone files for approved researchers, brand protection teams, and security researchers.",
+                        key_concepts=["CZDS", "zone file access", "zone data", "research access", "new registration monitoring", "ICANN CZDS"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                 ],
             ),
@@ -2619,10 +2847,22 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="IDNA 2008 vs IDNA 2003",
-                        description="Protocol differences, deviation characters (ß, ς), browser behavior divergence.",
-                        key_concepts=["IDNA 2008", "IDNA 2003", "deviation characters", "ß mapping", "browser divergence"],
+                        description="Protocol differences, deviation characters (ß, ς), browser behavior divergence. Chrome follows IDNA 2008; Firefox has nuanced handling of deviation characters.",
+                        key_concepts=["IDNA 2008", "IDNA 2003", "deviation characters", "ß mapping", "browser divergence", "Chrome IDNA 2008", "Firefox handling"],
                         rfcs=["RFC 5890", "RFC 5891"],
                         difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="CJK script challenges in domain names",
+                        description="Specific challenges for Chinese (simplified vs traditional character variants), Japanese (three scripts: Hiragana, Katakana, Kanji), and Korean (Hangul vs Hanja). The three largest non-Latin internet user populations.",
+                        key_concepts=["Chinese simplified/traditional", "Japanese scripts", "Hiragana", "Katakana", "Kanji", "Korean Hangul", "CJK variants", "character mapping"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="Emoji domains",
+                        description="Technical possibility of emoji in domain names, ICANN's position prohibiting emoji in new gTLDs, why they are not delegated. Common misconceptions and edge cases.",
+                        key_concepts=["emoji domains", "ICANN position", "emoji prohibition", "Punycode encoding", "IDN table exclusion"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                 ],
             ),
@@ -2633,8 +2873,8 @@ TAXONOMY: list[Category] = [
                 topics=[
                     Topic(
                         name="EAI overview and standards",
-                        description="Email Address Internationalization, SMTPUTF8, UTF-8 in email headers.",
-                        key_concepts=["EAI", "SMTPUTF8", "UTF-8 headers", "internationalized mailbox", "RFC 6531"],
+                        description="Email Address Internationalization, SMTPUTF8, UTF-8 in email headers. Downgrade to ASCII fallback mechanism for non-EAI-capable mail servers.",
+                        key_concepts=["EAI", "SMTPUTF8", "UTF-8 headers", "internationalized mailbox", "RFC 6531", "downgrade to ASCII"],
                         rfcs=["RFC 6531", "RFC 6532"],
                     ),
                     Topic(
@@ -2713,6 +2953,12 @@ TAXONOMY: list[Category] = [
                         description="Scripting domain renewals, transfers, DNS updates, bulk operations.",
                         key_concepts=["automation", "bulk operations", "scripting", "renewal automation", "DNS updates"],
                     ),
+                    Topic(
+                        name="DNS provider API rate limiting and backoff",
+                        description="Practical concern for DNS automation at scale: understanding provider rate limits, implementing exponential backoff, managing concurrent API calls, handling 429 responses.",
+                        key_concepts=["API rate limiting", "exponential backoff", "429 Too Many Requests", "concurrent requests", "rate budget", "retry strategy"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
                 ],
             ),
             Subcategory(
@@ -2740,6 +2986,13 @@ TAXONOMY: list[Category] = [
                         name="DNS audit trails and compliance",
                         description="Logging DNS changes, compliance requirements, audit evidence for SOC2/ISO.",
                         key_concepts=["audit trail", "change log", "SOC2", "ISO 27001", "compliance evidence"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="Automated DNSSEC signing and key management",
+                        description="Tools for automated DNSSEC signing: OpenDNSSEC, Knot DNS auto-signing, BIND automated key management. Key lifetime policies and automated rollover.",
+                        key_concepts=["OpenDNSSEC", "Knot auto-sign", "BIND inline-signing", "key lifetime policies", "automated rollover", "DNSSEC automation"],
+                        difficulty_range=("advanced", "expert"),
                     ),
                 ],
             ),
@@ -2782,6 +3035,19 @@ TAXONOMY: list[Category] = [
                         name="Windows DNS Server",
                         description="Microsoft DNS integrated with Active Directory, AD-integrated zones, conditional forwarding.",
                         key_concepts=["Windows DNS", "Active Directory", "AD-integrated zones", "conditional forwarder", "dnscmd"],
+                    ),
+                    Topic(
+                        name="Catalog zones (RFC 9432)",
+                        description="New mechanism for automatically configuring secondary DNS servers with zone lists. Eliminates manual per-zone configuration on secondary servers. Supported by Knot DNS and BIND.",
+                        key_concepts=["catalog zones", "automatic secondary configuration", "zone catalog", "Knot DNS catalog", "BIND catalog", "secondary provisioning"],
+                        rfcs=["RFC 9432"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
+                    Topic(
+                        name="dnsdist (PowerDNS load balancer)",
+                        description="PowerDNS's DNS load balancer and proxy for front-ending DNS infrastructure. Traffic routing, load balancing, DoH/DoT termination, Lua scripting, DDoS mitigation.",
+                        key_concepts=["dnsdist", "DNS load balancer", "DNS proxy", "DoH termination", "traffic routing", "Lua scripting", "PowerDNS"],
+                        difficulty_range=("intermediate", "expert"),
                     ),
                 ],
             ),
@@ -2886,6 +3152,12 @@ TAXONOMY: list[Category] = [
                         key_concepts=["enterprise DNS", "policy enforcement", "DNS firewall", "compliance logging", "SASE"],
                         difficulty_range=("intermediate", "expert"),
                     ),
+                    Topic(
+                        name="CISA Protective DNS",
+                        description="US government protective DNS service for federal agencies. Integrates threat intelligence from US-CERT feeds. Mandatory for many federal civilian executive branch agencies.",
+                        key_concepts=["CISA PDNS", "federal agencies", "threat intelligence integration", "US-CERT feeds", "FCEB agencies"],
+                        difficulty_range=("advanced", "expert"),
+                    ),
                 ],
             ),
             Subcategory(
@@ -2915,8 +3187,8 @@ TAXONOMY: list[Category] = [
                     ),
                     Topic(
                         name="DNS filtering and encryption challenges",
-                        description="How DoH/DoT complicates DNS filtering, split-tunnel issues, enterprise bypass concerns.",
-                        key_concepts=["DoH bypass", "encrypted DNS", "enterprise control", "split tunnel", "canary domain"],
+                        description="Tension between enterprise DNS filtering (requiring DNS query visibility) and encrypted DNS (DoH/DoT hiding queries). A critical operational challenge with split-tunnel issues and enterprise bypass concerns.",
+                        key_concepts=["DoH bypass", "encrypted DNS", "enterprise control", "split tunnel", "canary domain", "visibility vs privacy", "managed DoH"],
                         difficulty_range=("advanced", "expert"),
                     ),
                 ],
@@ -2956,8 +3228,8 @@ TAXONOMY: list[Category] = [
                 topics=[
                     Topic(
                         name="dig (Domain Information Groper)",
-                        description="The standard DNS query tool — query types, +trace, +short, @server, DNSSEC flags.",
-                        key_concepts=["dig", "+trace", "+short", "+dnssec", "@server", "query type", "dig output format"],
+                        description="The standard DNS query tool — query types, +trace, +short, @server, DNSSEC flags. Modern alternatives include dog and doggo.",
+                        key_concepts=["dig", "+trace", "+short", "+dnssec", "@server", "query type", "dig output format", "dog", "doggo"],
                     ),
                     Topic(
                         name="nslookup",
@@ -3108,6 +3380,18 @@ TAXONOMY: list[Category] = [
                         description="Cloudflare, AWS Route 53, NS1, Dyn, Akamai — managed DNS as a business.",
                         key_concepts=["DNS hosting", "managed DNS", "Cloudflare", "Route 53", "NS1", "market segments"],
                     ),
+                    Topic(
+                        name="Domain industry consolidation trends",
+                        description="How the industry is consolidating: fewer but larger registrars, registry consolidation (Identity Digital/Donuts acquisition of Afilias). Implications for competition and choice.",
+                        key_concepts=["consolidation", "registrar M&A", "registry consolidation", "Identity Digital", "Donuts/Afilias", "market concentration"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
+                    Topic(
+                        name="Domain industry trade associations",
+                        description="Where industry advocacy happens: Internet Commerce Association (ICA), ICANN Registrar Stakeholder Group, TLDops community, DNS-OARC.",
+                        key_concepts=["ICA", "Internet Commerce Association", "Registrar Stakeholder Group", "TLDops", "industry advocacy"],
+                        difficulty_range=("intermediate", "expert"),
+                    ),
                 ],
             ),
             Subcategory(
@@ -3181,6 +3465,34 @@ TAXONOMY: list[Category] = [
                     ),
                 ],
             ),
+            Subcategory(
+                name="Emerging Trends",
+                slug="emerging_trends",
+                description="Emerging technologies and trends affecting the domain name industry.",
+                topics=[
+                    Topic(
+                        name="AI and domain names",
+                        description="Impact of AI on the domain industry: AI-powered domain generation for phishing, AI-generated brand impersonation, AI in UDRP/dispute analysis, AI-assisted domain valuation, LLM-powered domain tools, ICANN's developing policies on AI-generated content in disputes.",
+                        key_concepts=["AI phishing", "AI brand impersonation", "AI domain generation", "LLM domain tools", "AI dispute analysis", "deepfake domains"],
+                    ),
+                    Topic(
+                        name="Blockchain and alternative naming systems",
+                        description="Ethereum Name Service (ENS), Handshake (HNS), Unstoppable Domains — how blockchain-based naming works, .eth and .crypto domains, ICANN's position on alternative roots, name collision risks with ICANN TLDs, cryptocurrency wallet address resolution, browser support status.",
+                        key_concepts=["ENS", "Ethereum Name Service", ".eth", "Handshake", "HNS", "Unstoppable Domains", ".crypto", "alternative roots", "name collision", "ICANN position", "wallet resolution"],
+                    ),
+                    Topic(
+                        name="Privacy-focused DNS evolution",
+                        description="The trajectory of DNS privacy: from cleartext to encrypted DNS (DoH, DoT, DoQ), Oblivious DoH, encrypted client hello (ECH), privacy-preserving WHOIS/RDAP, DNS data minimization trends, regulatory drivers (GDPR impact on DNS data).",
+                        key_concepts=["DNS privacy evolution", "encrypted DNS adoption", "ODoH", "ECH", "WHOIS privacy", "data minimization", "GDPR DNS impact"],
+                    ),
+                    Topic(
+                        name="Post-quantum DNS and DNSSEC",
+                        description="Impact of quantum computing on DNS security: post-quantum cryptography for DNSSEC signatures, larger key/signature sizes and DNS message constraints, NIST PQC standards, transition planning for DNSSEC algorithm migration, timeline considerations.",
+                        key_concepts=["post-quantum", "PQC", "DNSSEC quantum", "larger signatures", "NIST PQC", "algorithm migration", "quantum-safe DNS"],
+                        difficulty_range=("expert", "expert"),
+                    ),
+                ],
+            ),
         ],
     ),
     # ===================================================================
@@ -3199,22 +3511,22 @@ TAXONOMY: list[Category] = [
                     Topic(
                         name="seer_lookup — smart domain registration lookup",
                         description="Use seer_lookup for registration data. Tries RDAP first, falls back to WHOIS. Returns registrar, dates, nameservers, status.",
-                        key_concepts=["seer_lookup", "RDAP fallback", "registration data", "domain parameter"],
+                        key_concepts=["seer_lookup", "RDAP fallback", "registration data", "domain parameter", "registrar identification", "creation date", "expiry date", "nameserver list"],
                     ),
                     Topic(
                         name="seer_whois — WHOIS registration data",
                         description="Use seer_whois for raw WHOIS data. Returns registrar, creation/expiry dates, nameservers, status codes. 15s timeout.",
-                        key_concepts=["seer_whois", "WHOIS", "registrar", "expiry date", "status codes"],
+                        key_concepts=["seer_whois", "WHOIS", "registrar", "expiry date", "status codes", "raw text output", "15s timeout", "port 43"],
                     ),
                     Topic(
                         name="seer_rdap_domain — RDAP domain lookup",
                         description="Use seer_rdap_domain for structured RDAP data. Returns registrar, dates, nameservers, DNSSEC status. 30s timeout.",
-                        key_concepts=["seer_rdap_domain", "RDAP", "structured data", "DNSSEC status"],
+                        key_concepts=["seer_rdap_domain", "RDAP", "structured data", "DNSSEC status", "JSON response", "30s timeout", "bootstrap discovery"],
                     ),
                     Topic(
                         name="seer_rdap_ip — RDAP IP address lookup",
                         description="Use seer_rdap_ip for IP registration info. Accepts IPv4 or IPv6. Returns network range, country, organization.",
-                        key_concepts=["seer_rdap_ip", "IP lookup", "network range", "organization", "IPv4", "IPv6"],
+                        key_concepts=["seer_rdap_ip", "IP lookup", "network range", "organization", "IPv4", "IPv6", "RIR data", "CIDR block"],
                     ),
                     Topic(
                         name="seer_rdap_asn — RDAP ASN lookup",
@@ -3229,12 +3541,12 @@ TAXONOMY: list[Category] = [
                     Topic(
                         name="seer_propagation — global DNS propagation check",
                         description="Use seer_propagation to check DNS consistency across 29 global servers. Returns propagation percentage and per-server results.",
-                        key_concepts=["seer_propagation", "29 servers", "propagation percentage", "consistency", "global check"],
+                        key_concepts=["seer_propagation", "29 servers", "propagation percentage", "consistency", "global check", "regional variation", "cache expiry"],
                     ),
                     Topic(
                         name="seer_status — domain health check",
                         description="Use seer_status for comprehensive health: HTTP status, SSL certificate validity, expiration date, combined health indicators.",
-                        key_concepts=["seer_status", "HTTP status", "SSL validity", "expiry", "health check"],
+                        key_concepts=["seer_status", "HTTP status", "SSL validity", "expiry", "health check", "redirect following", "certificate chain", "10s timeout"],
                     ),
                 ],
             ),
@@ -3246,7 +3558,7 @@ TAXONOMY: list[Category] = [
                     Topic(
                         name="Bulk operations overview",
                         description="All bulk tools accept domains array (max 100) and concurrency parameter (default 10, max 50). Semaphore-based rate limiting.",
-                        key_concepts=["bulk operations", "max 100 domains", "concurrency", "semaphore", "rate limiting"],
+                        key_concepts=["bulk operations", "max 100 domains", "concurrency", "semaphore", "rate limiting", "domains array", "concurrent execution"],
                     ),
                     Topic(
                         name="seer_bulk_lookup — bulk registration data",
@@ -3278,7 +3590,7 @@ TAXONOMY: list[Category] = [
                     Topic(
                         name="tome_tld_lookup — TLD information",
                         description="Use tome_tld_lookup for detailed TLD info: type, registry, WHOIS/RDAP servers, DNSSEC, restrictions. Pass TLD without leading dot.",
-                        key_concepts=["tome_tld_lookup", "TLD info", "registry", "WHOIS server", "RDAP URL", "no leading dot"],
+                        key_concepts=["tome_tld_lookup", "TLD info", "registry", "WHOIS server", "RDAP URL", "no leading dot", "DNSSEC support", "IDN support"],
                     ),
                     Topic(
                         name="tome_tld_search — search TLDs by keyword",
@@ -3298,12 +3610,12 @@ TAXONOMY: list[Category] = [
                     Topic(
                         name="tome_record_lookup and tome_record_search",
                         description="Use tome_record_lookup for DNS record type details by name or IANA code. Use tome_record_search for keyword search across record types.",
-                        key_concepts=["tome_record_lookup", "tome_record_search", "record type", "IANA code", "RFC reference"],
+                        key_concepts=["tome_record_lookup", "tome_record_search", "record type", "IANA code", "RFC reference", "record format", "usage examples"],
                     ),
                     Topic(
                         name="tome_glossary_lookup and tome_glossary_search",
                         description="Use tome_glossary_lookup for domain industry term definitions. Use tome_glossary_search to search by keyword.",
-                        key_concepts=["tome_glossary_lookup", "tome_glossary_search", "definition", "category", "related terms"],
+                        key_concepts=["tome_glossary_lookup", "tome_glossary_search", "definition", "category", "related terms", "acronym expansion", "context"],
                     ),
                 ],
             ),
@@ -3314,38 +3626,43 @@ TAXONOMY: list[Category] = [
                 topics=[
                     Topic(
                         name="Choosing the right lookup tool",
-                        description="When to use seer_lookup vs seer_whois vs seer_rdap_domain. RDAP is preferred for structured data; WHOIS for legacy TLDs.",
-                        key_concepts=["tool selection", "RDAP vs WHOIS", "seer_lookup fallback", "structured vs raw"],
+                        description="When to use seer_lookup vs seer_whois vs seer_rdap_domain. RDAP is preferred for structured data; WHOIS for legacy TLDs or when RDAP is unavailable.",
+                        key_concepts=["tool selection", "RDAP vs WHOIS", "seer_lookup fallback", "structured vs raw", "ccTLD RDAP gaps", "WHOIS for legacy"],
                     ),
                     Topic(
                         name="Domain health audit workflow",
                         description="Combining seer_status + seer_dig + seer_propagation for a comprehensive domain health assessment.",
-                        key_concepts=["health audit", "combined tools", "status + dig + propagation", "comprehensive check"],
+                        key_concepts=["health audit", "combined tools", "status + dig + propagation", "comprehensive check", "SSL expiry check", "DNS consistency", "HTTP redirect chain"],
                     ),
                     Topic(
                         name="Portfolio assessment workflow",
                         description="Using bulk tools for portfolio-wide assessments: bulk_status for health, bulk_lookup for registration, bulk_dig for DNS consistency.",
-                        key_concepts=["portfolio assessment", "bulk tools", "registration audit", "DNS audit", "health audit"],
+                        key_concepts=["portfolio assessment", "bulk tools", "registration audit", "DNS audit", "health audit", "expiry calendar", "registrar distribution", "nameserver diversity"],
                     ),
                     Topic(
                         name="DNS migration verification workflow",
                         description="Using seer_propagation and seer_dig with specific nameservers to verify DNS migrations and changes.",
-                        key_concepts=["migration verification", "propagation check", "nameserver parameter", "before/after comparison"],
+                        key_concepts=["migration verification", "propagation check", "nameserver parameter", "before/after comparison", "TTL awareness", "cutover validation"],
                     ),
                     Topic(
                         name="TLD research workflow",
                         description="Using tome_tld_search to discover TLDs, tome_tld_overview for details, then seer tools for live diagnostics.",
-                        key_concepts=["TLD research", "tome + seer", "discovery to diagnostics", "reference + live data"],
+                        key_concepts=["TLD research", "tome + seer", "discovery to diagnostics", "reference + live data", "TLD comparison", "registration requirements"],
                     ),
                     Topic(
                         name="Investigating domain ownership and infrastructure",
                         description="Combining seer_rdap_domain + seer_dig (NS, A, MX) + seer_rdap_ip to map a domain's full infrastructure.",
-                        key_concepts=["infrastructure mapping", "ownership", "RDAP + dig + IP lookup", "full picture"],
+                        key_concepts=["infrastructure mapping", "ownership", "RDAP + dig + IP lookup", "full picture", "hosting provider identification", "email provider identification", "network owner"],
                     ),
                     Topic(
                         name="Interpreting tool results and error handling",
-                        description="Understanding tool output formats, handling timeouts, dealing with unavailable RDAP/WHOIS, rate limit errors.",
-                        key_concepts=["error handling", "timeouts", "unavailable data", "rate limits", "result interpretation"],
+                        description="Understanding tool output formats, handling timeouts, dealing with unavailable RDAP/WHOIS, rate limit errors. Specific error codes: WHOIS rate limit errors, RDAP bootstrap failures, DNS SERVFAIL vs NXDOMAIN interpretation.",
+                        key_concepts=["error handling", "timeouts", "unavailable data", "rate limits", "result interpretation", "SERVFAIL vs NXDOMAIN", "RDAP bootstrap failure", "WHOIS rate limit"],
+                    ),
+                    Topic(
+                        name="Tool limitations and known gaps",
+                        description="What seer tools cannot do: cannot perform zone transfers, cannot access ccTLD registrar EPP systems directly, WHOIS parsing may miss non-standard formats, RDAP coverage varies by TLD.",
+                        key_concepts=["tool limitations", "no zone transfer", "no EPP access", "WHOIS parsing limits", "RDAP coverage gaps", "ccTLD limitations"],
                     ),
                 ],
             ),
@@ -3357,57 +3674,57 @@ TAXONOMY: list[Category] = [
                     Topic(
                         name="Email authentication analysis skill",
                         description="Using the email-auth skill to audit SPF, DKIM, DMARC configuration. Combines seer_dig TXT queries with policy analysis.",
-                        key_concepts=["email-auth skill", "SPF audit", "DKIM validation", "DMARC analysis", "policy gaps"],
+                        key_concepts=["email-auth skill", "SPF audit", "DKIM validation", "DMARC analysis", "policy gaps", "alignment check", "reporting configuration"],
                     ),
                     Topic(
                         name="Zone health audit skill",
                         description="Using the zone-health skill to audit DNS zones against best-practice checklists: SOA, NS, MX, CNAME, CAA, DNSSEC, TTL consistency.",
-                        key_concepts=["zone-health skill", "best practices", "checklist", "severity levels", "recommendations"],
+                        key_concepts=["zone-health skill", "best practices", "checklist", "severity levels", "recommendations", "lame delegation check", "DNSSEC validation"],
                     ),
                     Topic(
                         name="Portfolio audit skill",
                         description="Using the portfolio-audit skill for multi-domain health assessment across registration, DNS, SSL, security, and consistency dimensions.",
-                        key_concepts=["portfolio-audit skill", "multi-domain", "scoring", "report template", "dimension analysis"],
+                        key_concepts=["portfolio-audit skill", "multi-domain", "scoring", "report template", "dimension analysis", "risk scoring", "expiry tracking"],
                     ),
                     Topic(
                         name="Typosquatting detection skill",
                         description="Using the typosquatting skill to generate lookalike domains via omission, transposition, homoglyphs, bitsquatting, TLD swaps, then triage results.",
-                        key_concepts=["typosquatting skill", "lookalike generation", "homoglyphs", "bitsquatting", "triage"],
+                        key_concepts=["typosquatting skill", "lookalike generation", "homoglyphs", "bitsquatting", "triage", "TLD swaps", "keyboard adjacency", "registration check"],
                     ),
                     Topic(
                         name="Phishing and abuse analysis skill",
                         description="Using the phishing-analysis skill to detect threat indicators across registration, DNS, SSL, and infrastructure signals.",
-                        key_concepts=["phishing-analysis skill", "threat indicators", "abuse scoring", "registration signals", "reporting"],
+                        key_concepts=["phishing-analysis skill", "threat indicators", "abuse scoring", "registration signals", "reporting", "domain age signal", "registrar reputation"],
                     ),
                     Topic(
                         name="HTTP recon skill",
                         description="Using the http-recon skill for redirect tracing, security header auditing (HSTS, CSP, X-Content-Type-Options), and technology fingerprinting.",
-                        key_concepts=["http-recon skill", "redirect chain", "security headers", "HSTS", "CSP", "fingerprinting"],
+                        key_concepts=["http-recon skill", "redirect chain", "security headers", "HSTS", "CSP", "fingerprinting", "X-Content-Type-Options", "server header"],
                     ),
                     Topic(
                         name="CDN and hosting detection skill",
                         description="Using the cdn-detection skill to identify infrastructure providers from DNS patterns, HTTP headers, IP ranges, and SSL certificates.",
-                        key_concepts=["cdn-detection skill", "provider identification", "DNS patterns", "CNAME signatures", "IP ranges"],
+                        key_concepts=["cdn-detection skill", "provider identification", "DNS patterns", "CNAME signatures", "IP ranges", "certificate issuer", "header analysis"],
                     ),
                     Topic(
                         name="Migration planner skill",
                         description="Using the migration-planner skill for five-phase DNS provider migrations: audit, prepare, execute, validate, cleanup.",
-                        key_concepts=["migration-planner skill", "five phases", "pre-flight checks", "validation", "TTL lowering"],
+                        key_concepts=["migration-planner skill", "five phases", "pre-flight checks", "validation", "TTL lowering", "rollback plan", "cutover checklist"],
                     ),
                     Topic(
                         name="Penetration testing skill",
                         description="Using the pentest skill for domain vulnerability scanning: subdomain takeover, HTTP security, email auth gaps, SSL/TLS, DNS zone security.",
-                        key_concepts=["pentest skill", "subdomain takeover", "vulnerability scanning", "exposure report", "security assessment"],
+                        key_concepts=["pentest skill", "subdomain takeover", "vulnerability scanning", "exposure report", "security assessment", "dangling CNAME detection", "open relay check"],
                     ),
                     Topic(
                         name="Registration compliance skill",
                         description="Using the registration-compliance skill to check ICANN policy adherence: lifecycle, transfers, disputes, registration data requirements.",
-                        key_concepts=["registration-compliance skill", "ICANN policy", "lifecycle", "transfer rules", "EPP status"],
+                        key_concepts=["registration-compliance skill", "ICANN policy", "lifecycle", "transfer rules", "EPP status", "WHOIS accuracy", "lock status"],
                     ),
                     Topic(
                         name="RFC reference skill",
                         description="Using the rfc-reference skill to look up domain-relevant RFCs with plain-language summaries across DNS, DNSSEC, email auth, WHOIS/RDAP, and operations.",
-                        key_concepts=["rfc-reference skill", "RFC lookup", "plain-language summary", "cross-reference"],
+                        key_concepts=["rfc-reference skill", "RFC lookup", "plain-language summary", "cross-reference", "RFC by topic", "obsoleted RFC tracking"],
                     ),
                 ],
             ),

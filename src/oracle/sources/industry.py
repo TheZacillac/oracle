@@ -36,11 +36,9 @@ M3AAWG_SOURCES = {
         "url": "https://www.m3aawg.org/documents/en/m3aawg-sender-best-common-practices-version-30",
         "category": "email",
     },
-    "m3aawg_phishing": {
-        "name": "M3AAWG Anti-Phishing and Published Documents",
-        "url": "https://www.m3aawg.org/published-documents",
-        "category": "dns_abuse",
-    },
+    # NOTE: m3aawg_phishing removed — same URL as m3aawg_best_practices
+    # (both pointed to m3aawg.org/published-documents). The best_practices
+    # entry with category "email" covers all M3AAWG published documents.
     "m3aawg_dns_practices": {
         "name": "M3AAWG DNS Abuse Prevention for Registrars and Registries (2024)",
         "url": "https://www.m3aawg.org/DNSAbusePreventionRegReg2024",
@@ -80,8 +78,8 @@ DNS_OARC_SOURCES = {
         "category": "dns_tools",
     },
     "dns_flag_day": {
-        "name": "DNS Flag Day Events and Requirements (GitHub Mirror)",
-        "url": "https://dns-violations.github.io/dnsflagday/",
+        "name": "DNS Flag Day Events and Requirements",
+        "url": "https://dnsflagday.net/",
         "category": "dns",
     },
     "ditl_data": {
@@ -285,27 +283,18 @@ INDUSTRY_BUSINESS_SOURCES = {
         "name": "Domain Name Wire — Industry News and Analysis",
         "url": "https://domainnamewire.com/",
         "category": "industry",
-    },
-    "thedomains": {
-        "name": "TheDomains.com — Domain Industry Commentary",
-        "url": "https://www.thedomains.com/",
-        "category": "industry",
+        # NOTE: Industry news/blog source — not authoritative for policy or
+        # technical facts. Use for industry context only, not factual claims.
     },
     "circleid": {
-        "name": "CircleID — Internet Infrastructure and Policy",
+        "name": "CircleID — Internet Infrastructure and Policy Forum",
         "url": "https://www.circleid.com/",
         "category": "industry",
+        # NOTE: Publishes opinion pieces and contributed articles. Respected
+        # industry forum but not authoritative for factual claims.
     },
-    "domain_investing": {
-        "name": "Domain Investing — Domain Investment Blog",
-        "url": "https://domaininvesting.com/",
-        "category": "industry",
-    },
-    "icann_registrar_advisory": {
-        "name": "ICANN Registrar Resources and Advisory",
-        "url": "https://www.icann.org/resources/pages/registrars-0d-2012-02-25-en",
-        "category": "industry",
-    },
+    # NOTE: icann_registrar_advisory removed — duplicate URL of
+    # registrar_best_practices in icann.py.
     "internet_commerce_assoc": {
         "name": "Internet Commerce Association — Domain Industry Advocacy",
         "url": "https://www.internetcommerce.org/",
@@ -383,11 +372,9 @@ BRAND_PROTECTION_SOURCES = {
         "url": "https://www.wipo.int/wipo_magazine/en/",
         "category": "brand_protection",
     },
-    "markmonitor_brand_protection": {
-        "name": "MarkMonitor (Clarivate) — Domain Brand Protection Guide",
-        "url": "https://clarivate.com/products/ip-intelligence/trademark-research-and-protection/markmonitor-domain-management/",
-        "category": "brand_protection",
-    },
+    # NOTE: markmonitor_brand_protection removed — same URL as markmonitor
+    # in CORPORATE_REGISTRAR_SOURCES. MarkMonitor is kept in the registrar
+    # section which covers both domain management and brand protection.
     "icann_tmch_resources": {
         "name": "ICANN Trademark Clearinghouse (TMCH) Resources",
         "url": "https://www.icann.org/resources/pages/tmch-2012-09-19-en",
@@ -459,11 +446,9 @@ AFTERMARKET_SOURCES = {
         "url": "https://namebio.com/",
         "category": "aftermarket",
     },
-    "godaddy_domain_appraisal": {
-        "name": "GoDaddy Domain Value Appraisal (Estibot)",
-        "url": "https://www.godaddy.com/domain-value-appraisal",
-        "category": "aftermarket",
-    },
+    # NOTE: godaddy_domain_appraisal removed — commercial tool with known
+    # accuracy limitations; should not be a source of authoritative training
+    # data on domain valuation.
     "park_io": {
         "name": "Park.io — Expired Domain Catching Service",
         "url": "https://park.io/",
@@ -474,37 +459,23 @@ AFTERMARKET_SOURCES = {
         "url": "https://dan.com/",
         "category": "aftermarket",
     },
-    "squadhelp": {
-        "name": "SquadHelp — Naming and Domain Marketplace",
-        "url": "https://www.squadhelp.com/",
-        "category": "aftermarket",
-    },
-    "domain_name_wire": {
-        "name": "Domain Name Wire — Domain Industry Blog",
-        "url": "https://domainnamewire.com/",
-        "category": "aftermarket",
-    },
+    # NOTE: squadhelp removed — commercial naming marketplace, not an
+    # authoritative reference source. The taxonomy can mention it as a
+    # key_concept without fetching its content as training material.
+    # NOTE: domain_name_wire removed — duplicate of domain_name_wire_industry
+    # in INDUSTRY_BUSINESS_SOURCES (same URL: domainnamewire.com).
 }
 
 # =============================================================================
 # Domain Blocking & Protection
 # =============================================================================
 BLOCKING_SOURCES = {
-    "blocking_dpml_identity_digital": {
-        "name": "Identity Digital — DPML Domain Blocking Service",
-        "url": "https://www.identity.digital/services/dpml",
-        "category": "blocking",
-    },
-    "blocking_adultblock": {
-        "name": "ICM Registry — AdultBlock Domain Blocking",
-        "url": "https://www.icmregistry.com/adultblock/",
-        "category": "blocking",
-    },
-    "blocking_globalblock": {
-        "name": "GlobalBlock — Multi-Registry Domain Blocking Service",
-        "url": "https://www.globalblock.com/",
-        "category": "blocking",
-    },
+    # NOTE: blocking_dpml_identity_digital removed — duplicate of
+    # identity_digital_dpml in BRAND_PROTECTION_SOURCES (same URL).
+    # NOTE: blocking_adultblock removed — duplicate of icm_adultblock
+    # in BRAND_PROTECTION_SOURCES (same URL).
+    # NOTE: blocking_globalblock removed — duplicate of globalblock
+    # in BRAND_PROTECTION_SOURCES (same URL).
     "icann_rpm_review": {
         "name": "ICANN GNSO Rights Protection Mechanisms (RPM) Review",
         "url": "https://gnso.icann.org/en/group-activities/active/rpm",
@@ -554,6 +525,11 @@ MONITORING_SOURCES = {
     "rapid7_project_sonar": {
         "name": "Rapid7 Project Sonar — Internet-Wide DNS Scanning",
         "url": "https://www.rapid7.com/research/project-sonar/",
+        "category": "monitoring",
+    },
+    "caida_dns_research": {
+        "name": "CAIDA — DNS and Naming Research",
+        "url": "https://www.caida.org/projects/dns/",
         "category": "monitoring",
     },
 }

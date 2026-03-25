@@ -105,6 +105,16 @@ GOVERNANCE_FORUM_SOURCES = {
         "url": "https://freedomonlinecoalition.com/",
         "category": "governance",
     },
+    "isoc_overview": {
+        "name": "Internet Society (ISOC) — About",
+        "url": "https://www.internetsociety.org/about-internet-society/",
+        "category": "governance",
+    },
+    "isoc_dns": {
+        "name": "Internet Society — DNS Privacy Resources",
+        "url": "https://www.internetsociety.org/issues/dns-privacy/",
+        "category": "governance",
+    },
 }
 
 # =============================================================================
@@ -182,6 +192,11 @@ CYBERSECURITY_AGENCY_SOURCES = {
         "url": "https://www.bsi.bund.de/EN/Themen/Regulierte-Wirtschaft/Weitere_regulierte_Unternehmen/Internet_Service_Provider/Internet-Service-Provider_node.html",
         "category": "domain_security",
     },
+    "nist_dns_guide": {
+        "name": "NIST SP 800-81 Rev. 2 — Secure DNS Deployment Guide",
+        "url": "https://csrc.nist.gov/publications/detail/sp/800-81/2/final",
+        "category": "domain_security",
+    },
 }
 
 
@@ -222,6 +237,11 @@ COMPLIANCE_SOURCES = {
     "icann_whois_gdpr_temp_spec": {
         "name": "ICANN gTLD Registration Data Temporary Specification (WHOIS/GDPR)",
         "url": "https://www.icann.org/resources/pages/gtld-registration-data-specs-en",
+        "category": "compliance",
+    },
+    "dns4eu": {
+        "name": "DNS4EU Initiative (JoinDNS4EU)",
+        "url": "https://joindns4.eu/",
         "category": "compliance",
     },
 }
