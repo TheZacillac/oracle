@@ -7,7 +7,7 @@ import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from oracle.schema import TrainingExample
+from oracle.schema import FailedGeneration, TrainingExample
 from oracle.taxonomy import Category, Subcategory, Topic
 
 logger = logging.getLogger(__name__)
@@ -87,6 +87,52 @@ class BaseGenerator(ABC):
             logger.warning("Skipped %d corrupt line(s) in %s, loaded %d valid", skipped, path.name, len(examples))
 
         return examples
+
+    # ------------------------------------------------------------------
+    # Failure tracking
+    # ------------------------------------------------------------------
+
+    FAILURES_FILE = "_failures.jsonl"
+
+    def save_failure(self, failure: FailedGeneration) -> Path:
+        """Append a failed generation record to the failures file."""
+        path = self.output_dir / self.FAILURES_FILE
+        with open(path, "a") as f:
+            f.write(failure.model_dump_json() + "\n")
+        return path
+
+    @staticmethod
+    def load_failures(output_dir: Path) -> list[FailedGeneration]:
+        """Load all failure records from the failures file."""
+        path = output_dir / BaseGenerator.FAILURES_FILE
+        if not path.exists():
+            return []
+
+        failures = []
+        with open(path) as f:
+            for line_num, line in enumerate(f, 1):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    failures.append(FailedGeneration.model_validate_json(line))
+                except Exception as e:
+                    logger.warning("Skipping corrupt failure line %d: %s", line_num, e)
+        return failures
+
+    @staticmethod
+    def write_failures(output_dir: Path, failures: list[FailedGeneration]) -> Path:
+        """Overwrite the failures file with an updated list (used after retries)."""
+        path = output_dir / BaseGenerator.FAILURES_FILE
+        if not failures:
+            # Clean up empty file
+            if path.exists():
+                path.unlink()
+            return path
+        with open(path, "w") as f:
+            for failure in failures:
+                f.write(failure.model_dump_json() + "\n")
+        return path
 
     @staticmethod
     def make_id(category_slug: str, subcategory_slug: str, seq: int) -> str:

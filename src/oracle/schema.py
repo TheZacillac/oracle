@@ -138,6 +138,29 @@ class TrainingExample(BaseModel):
         return self
 
 
+class FailedGeneration(BaseModel):
+    """A generation request that failed and can be retried.
+
+    Captures enough context to replay the exact same generation call.
+    """
+
+    # --- Request parameters ---
+    category: str = Field(description="Category slug")
+    subcategory: str = Field(description="Subcategory slug")
+    topic: str = Field(description="Topic name")
+    difficulty: str = Field(description="beginner | intermediate | advanced | expert")
+    format: ExampleFormat = Field(default=ExampleFormat.INSTRUCTION)
+    count: int = Field(default=1, description="Number of examples requested")
+    include_thinking: bool = Field(default=True)
+
+    # --- Failure info ---
+    error: str = Field(description="Error message or failure reason")
+    provider: str = Field(default="", description="LLM provider used")
+    model: str = Field(default="", description="Model name used")
+    failed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    attempts: int = Field(default=1, description="Number of attempts so far")
+
+
 class DatasetMetadata(BaseModel):
     """Metadata for an exported dataset file."""
 

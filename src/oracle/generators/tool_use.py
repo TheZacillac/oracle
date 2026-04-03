@@ -15,6 +15,7 @@ from oracle.difficulty import get_profile
 from oracle.generators.base import BaseGenerator
 from oracle.schema import (
     ExampleFormat,
+    FailedGeneration,
     GenerationMethod,
     Message,
     MessageRole,
@@ -202,7 +203,10 @@ class ToolUseGenerator(BaseGenerator):
                 max_tokens=8192,
                 messages=[{"role": "user", "content": prompt}],
             )
-            return response.choices[0].message.content
+            content = response.choices[0].message.content
+            if content is None:
+                raise ValueError("LLM returned null content (finish_reason may be 'tool_calls' or 'length')")
+            return content
         else:
             raise ValueError(f"Unknown provider: {self.provider}")
 
@@ -235,7 +239,25 @@ class ToolUseGenerator(BaseGenerator):
 
         raw_examples = parse_llm_json(raw_response)
         if raw_examples is None:
-            logger.error("Failed to parse tool-use LLM response (all repair strategies failed):\n%s", raw_response[:500])
+            error_msg = (
+                f"JSON parse failed (all repair strategies failed) [{len(raw_response)} chars]"
+            )
+            logger.error(
+                "Failed to parse tool-use LLM response (all repair strategies failed) "
+                "[%d chars]:\n%s", len(raw_response), raw_response[:1000],
+            )
+            self.save_failure(FailedGeneration(
+                category=category.slug,
+                subcategory=subcategory.slug,
+                topic=topic.name,
+                difficulty=difficulty,
+                format=ExampleFormat.TOOL_USE,
+                count=count,
+                include_thinking=True,
+                error=error_msg,
+                provider=self.provider,
+                model=self.model,
+            ))
             return []
 
         # Convert to TrainingExample records
@@ -268,6 +290,21 @@ class ToolUseGenerator(BaseGenerator):
                 keys = list(raw.keys())
                 logger.warning("Skipping invalid tool-use example %d (keys=%s): %s", i, keys, e)
                 continue
+
+        if not examples and raw_examples:
+            error_msg = f"All {len(raw_examples)} parsed tool-use examples failed validation"
+            self.save_failure(FailedGeneration(
+                category=category.slug,
+                subcategory=subcategory.slug,
+                topic=topic.name,
+                difficulty=difficulty,
+                format=ExampleFormat.TOOL_USE,
+                count=count,
+                include_thinking=True,
+                error=error_msg,
+                provider=self.provider,
+                model=self.model,
+            ))
 
         logger.info("Generated %d valid tool-use examples (requested %d)", len(examples), count)
         return examples

@@ -239,7 +239,8 @@ def split_dataset(
     """
     import random
 
-    assert abs(train_ratio + val_ratio + test_ratio - 1.0) < 1e-6, "Ratios must sum to 1.0"
+    if abs(train_ratio + val_ratio + test_ratio - 1.0) >= 1e-6:
+        raise ValueError(f"Ratios must sum to 1.0 (got {train_ratio + val_ratio + test_ratio})")
 
     rng = random.Random(seed)
 
@@ -298,7 +299,9 @@ def export_splits(
         "nemo_sft": export_nemo_sft,
         "alpaca": export_alpaca,
     }
-    exporter = exporters[export_format]
+    exporter = exporters.get(export_format)
+    if not exporter:
+        raise ValueError(f"Unknown format: {export_format}. Choose from: {', '.join(exporters)}")
 
     paths = {}
     for split_name, split_data in [("train", train), ("val", val), ("test", test)]:

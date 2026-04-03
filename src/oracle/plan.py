@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from oracle.difficulty import Level
-from oracle.schema import ExampleFormat
+from oracle.schema import ExampleFormat, FailedGeneration
 from oracle.taxonomy import TAXONOMY, Category, get_category
 
 logger = logging.getLogger(__name__)
@@ -254,6 +254,7 @@ async def execute_plan(
                         # based on the plan's thinking_ratio (default 75%)
                         include_thinking = rng.random() < plan.thinking_ratio
 
+                        batch_count = min(fmt_count, plan.batch_size)
                         try:
                             if fmt == ExampleFormat.TOOL_USE:
                                 examples = await gen.generate(
@@ -261,7 +262,7 @@ async def execute_plan(
                                     subcategory=sub,
                                     topic=topic,
                                     difficulty=difficulty,
-                                    count=min(fmt_count, plan.batch_size),
+                                    count=batch_count,
                                 )
                             else:
                                 examples = await gen.generate(
@@ -269,7 +270,7 @@ async def execute_plan(
                                     subcategory=sub,
                                     topic=topic,
                                     difficulty=difficulty,
-                                    count=min(fmt_count, plan.batch_size),
+                                    count=batch_count,
                                     format_type=fmt,
                                     include_thinking=include_thinking,
                                 )
@@ -280,6 +281,19 @@ async def execute_plan(
                                 "Failed generating %s/%s/%s [%s/%s]: %s",
                                 cat_slug, sub.slug, topic.name, difficulty, fmt.value, e,
                             )
+                            # Record failure for retry (LLM call or unexpected error)
+                            gen.save_failure(FailedGeneration(
+                                category=cat_slug,
+                                subcategory=sub.slug,
+                                topic=topic.name,
+                                difficulty=difficulty,
+                                format=fmt,
+                                count=batch_count,
+                                include_thinking=include_thinking,
+                                error=str(e),
+                                provider=plan.provider,
+                                model=plan.model or "",
+                            ))
 
         results[cat_slug] = cat_total
         logger.info("Category %s: generated %d examples", cat_slug, cat_total)

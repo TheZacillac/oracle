@@ -21,12 +21,19 @@ EXPORTS_DIR = DATA_DIR / "exports"
 
 
 def setup_logging(verbose: bool = False):
-    level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level,
-        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-        datefmt="%H:%M:%S",
-    )
+    try:
+        from arcanum._logging import configure_logging
+        import os
+        if verbose:
+            os.environ["ARCANUM_LOG_LEVEL"] = "DEBUG"
+        configure_logging("oracle")
+    except ImportError:
+        level = logging.DEBUG if verbose else logging.INFO
+        logging.basicConfig(
+            level=level,
+            format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            datefmt="%H:%M:%S",
+        )
 
 
 @click.group()
@@ -134,12 +141,16 @@ def generate(category: str, difficulty: str, count: int, format_type: str, provi
             provider=provider,
             model=model,
         )
-        all_examples = []
-        for sub in cat.subcategories:
-            for topic in sub.topics:
-                examples = asyncio.run(gen.generate(cat, sub, topic, difficulty, count))
-                gen.save_examples(examples)
-                all_examples.extend(examples)
+        async def _run_tool_use():
+            all_ex = []
+            for sub in cat.subcategories:
+                for topic in sub.topics:
+                    examples = await gen.generate(cat, sub, topic, difficulty, count)
+                    gen.save_examples(examples)
+                    all_ex.extend(examples)
+            return all_ex
+
+        all_examples = asyncio.run(_run_tool_use())
         console.print(f"\n[green]Generated {len(all_examples)} tool-use examples → {output_dir}[/green]")
     else:
         from oracle.generators.synthetic import SyntheticGenerator
@@ -555,6 +566,150 @@ def augment(path: str, count: int, provider: str, model: str | None, output: str
             f.write(ex.model_dump_json() + "\n")
 
     console.print(f"\n[green]Generated {len(augmented)} augmented examples → {output_path}[/green]")
+
+
+# -----------------------------------------------------------------------
+# retry
+# -----------------------------------------------------------------------
+@main.command()
+@click.option("--provider", "-p", default=None, type=click.Choice(["anthropic", "openai", "ollama"]),
+              help="Override provider (default: use original)")
+@click.option("--model", "-m", default=None, help="Override model (default: use original)")
+@click.option("--output", "-o", default=None, type=click.Path(), help="Output directory")
+@click.option("--max-attempts", default=3, type=int, help="Skip failures with this many prior attempts")
+@click.option("--dry-run", is_flag=True, help="Show failures without retrying")
+def retry(provider: str | None, model: str | None, output: str | None, max_attempts: int, dry_run: bool):
+    """Retry failed generation requests."""
+    from oracle.generators.base import BaseGenerator
+    from oracle.schema import ExampleFormat
+    from oracle.taxonomy import get_category
+
+    output_dir = Path(output) if output else GENERATED_DIR
+    failures = BaseGenerator.load_failures(output_dir)
+
+    if not failures:
+        console.print("[green]No failures to retry.[/green]")
+        return
+
+    # Filter by max attempts
+    eligible = [f for f in failures if f.attempts < max_attempts]
+    skipped = len(failures) - len(eligible)
+
+    console.print(f"\n[bold]Failures:[/bold] {len(failures)} total, {len(eligible)} eligible for retry")
+    if skipped:
+        console.print(f"  [dim]({skipped} skipped — reached {max_attempts} attempts)[/dim]")
+
+    # Summary table
+    table = Table(title="Failed Generations")
+    table.add_column("Category", style="cyan")
+    table.add_column("Subcategory")
+    table.add_column("Topic")
+    table.add_column("Diff")
+    table.add_column("Format")
+    table.add_column("Attempts", justify="right")
+    table.add_column("Error", max_width=40)
+
+    for f in eligible:
+        table.add_row(
+            f.category, f.subcategory, f.topic,
+            f.difficulty, f.format.value,
+            str(f.attempts), f.error[:40],
+        )
+    console.print(table)
+
+    if dry_run:
+        console.print("\n[yellow]Dry run — no retries attempted[/yellow]")
+        return
+
+    if not eligible:
+        console.print("[yellow]No eligible failures to retry.[/yellow]")
+        return
+
+    async def _retry():
+        from oracle.generators.synthetic import SyntheticGenerator
+        from oracle.generators.tool_use import ToolUseGenerator
+
+        succeeded = 0
+        still_failed: list = []
+
+        for f in eligible:
+            cat = get_category(f.category)
+            if not cat:
+                console.print(f"  [red]Unknown category {f.category}, skipping[/red]")
+                still_failed.append(f)
+                continue
+
+            # Find subcategory and topic in taxonomy
+            sub = next((s for s in cat.subcategories if s.slug == f.subcategory), None)
+            if not sub:
+                console.print(f"  [red]Unknown subcategory {f.subcategory}, skipping[/red]")
+                still_failed.append(f)
+                continue
+
+            topic = next((t for t in sub.topics if t.name == f.topic), None)
+            if not topic:
+                console.print(f"  [red]Unknown topic {f.topic}, skipping[/red]")
+                still_failed.append(f)
+                continue
+
+            use_provider = provider or f.provider or "ollama"
+            use_model = model or f.model or None
+
+            console.print(
+                f"  Retrying [cyan]{f.category}/{f.subcategory}/{f.topic}[/cyan] "
+                f"[{f.difficulty}/{f.format.value}] (attempt {f.attempts + 1})...",
+                end=" ",
+            )
+
+            try:
+                if f.format == ExampleFormat.TOOL_USE:
+                    gen = ToolUseGenerator(
+                        output_dir=output_dir,
+                        provider=use_provider,
+                        model=use_model,
+                    )
+                    examples = await gen.generate(
+                        category=cat, subcategory=sub, topic=topic,
+                        difficulty=f.difficulty, count=f.count,
+                    )
+                else:
+                    gen = SyntheticGenerator(
+                        output_dir=output_dir,
+                        provider=use_provider,
+                        model=use_model,
+                    )
+                    examples = await gen.generate(
+                        category=cat, subcategory=sub, topic=topic,
+                        difficulty=f.difficulty, count=f.count,
+                        format_type=f.format, include_thinking=f.include_thinking,
+                    )
+
+                if examples:
+                    gen.save_examples(examples)
+                    succeeded += len(examples)
+                    console.print(f"[green]{len(examples)} examples[/green]")
+                else:
+                    # generate() already saved a new failure record — bump attempts
+                    f.attempts += 1
+                    f.error = "Retry produced 0 examples"
+                    still_failed.append(f)
+                    console.print("[red]0 examples[/red]")
+            except Exception as e:
+                f.attempts += 1
+                f.error = str(e)
+                still_failed.append(f)
+                console.print(f"[red]error: {e}[/red]")
+
+        # Also keep failures that exceeded max_attempts
+        still_failed.extend(f for f in failures if f.attempts >= max_attempts)
+
+        # Rewrite the failures file (replaces the append-only file with only remaining failures)
+        BaseGenerator.write_failures(output_dir, still_failed)
+
+        return succeeded, len(still_failed)
+
+    succeeded, remaining = asyncio.run(_retry())
+    console.print(f"\n[green]Retry complete: {succeeded} examples generated, {remaining} failures remaining[/green]")
 
 
 if __name__ == "__main__":

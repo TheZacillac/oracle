@@ -159,5 +159,8 @@ async def _call_llm(client, provider: str, model: str, prompt: str) -> str:
             model=model, max_tokens=1024,
             messages=[{"role": "user", "content": prompt}],
         )
-        return response.choices[0].message.content
+        content = response.choices[0].message.content
+        if content is None:
+            raise ValueError("LLM returned null content (finish_reason may be 'tool_calls' or 'length')")
+        return content
     raise ValueError(f"Unknown provider: {provider}")

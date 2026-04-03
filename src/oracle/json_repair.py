@@ -103,7 +103,12 @@ def parse_llm_json(text: str) -> list | None:
 
 
 def _strip_fences(text: str) -> str:
-    """Remove markdown code fences."""
+    """Remove markdown code fences, thinking tags, and other LLM wrappers."""
+    # Remove <think>...</think> blocks (Nemotron, DeepSeek, Qwen, etc.)
+    text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
+    # Also handle unclosed <think> (model still "thinking" when it started outputting)
+    text = re.sub(r"<think>.*", "", text, flags=re.DOTALL)
+
     if text.startswith("```"):
         # Remove opening fence (with optional language tag)
         text = re.sub(r"^```(?:json)?\s*\n?", "", text)

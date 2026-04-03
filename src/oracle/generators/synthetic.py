@@ -14,6 +14,7 @@ from oracle.difficulty import Level, get_profile
 from oracle.generators.base import BaseGenerator
 from oracle.schema import (
     ExampleFormat,
+    FailedGeneration,
     GenerationMethod,
     Message,
     MessageRole,
@@ -229,7 +230,10 @@ class SyntheticGenerator(BaseGenerator):
                 max_tokens=8192,
                 messages=[{"role": "user", "content": prompt}],
             )
-            return response.choices[0].message.content
+            content = response.choices[0].message.content
+            if content is None:
+                raise ValueError("LLM returned null content (finish_reason may be 'tool_calls' or 'length')")
+            return content
         else:
             raise ValueError(f"Unknown provider: {self.provider}")
 
@@ -271,7 +275,25 @@ class SyntheticGenerator(BaseGenerator):
 
         raw_examples = parse_llm_json(raw_response)
         if raw_examples is None:
-            logger.error("Failed to parse LLM response as JSON (all repair strategies failed):\n%s", raw_response[:500])
+            error_msg = (
+                f"JSON parse failed (all repair strategies failed) [{len(raw_response)} chars]"
+            )
+            logger.error(
+                "Failed to parse LLM response as JSON (all repair strategies failed) "
+                "[%d chars]:\n%s", len(raw_response), raw_response[:1000],
+            )
+            self.save_failure(FailedGeneration(
+                category=category.slug,
+                subcategory=subcategory.slug,
+                topic=topic.name,
+                difficulty=difficulty,
+                format=format_type,
+                count=count,
+                include_thinking=include_thinking,
+                error=error_msg,
+                provider=self.provider,
+                model=self.model,
+            ))
             return []
 
         # Convert to TrainingExample records
@@ -306,6 +328,21 @@ class SyntheticGenerator(BaseGenerator):
                 keys = list(raw.keys())
                 logger.warning("Skipping invalid example %d (keys=%s): %s", i, keys, e)
                 continue
+
+        if not examples and raw_examples:
+            error_msg = f"All {len(raw_examples)} parsed examples failed validation"
+            self.save_failure(FailedGeneration(
+                category=category.slug,
+                subcategory=subcategory.slug,
+                topic=topic.name,
+                difficulty=difficulty,
+                format=format_type,
+                count=count,
+                include_thinking=include_thinking,
+                error=error_msg,
+                provider=self.provider,
+                model=self.model,
+            ))
 
         logger.info("Generated %d valid examples (requested %d)", len(examples), count)
         return examples
@@ -343,7 +380,7 @@ class SyntheticGenerator(BaseGenerator):
 
         elif format_type == ExampleFormat.MULTI_TURN:
             turns = raw.get("turns", raw.get("conversation", []))
-            if not turns:
+            if not turns or not isinstance(turns, list):
                 question = self._get_key(raw, "question", "prompt", "query", "input", "user")
                 answer = self._get_key(raw, "answer", "response", "output", "assistant")
                 messages.append(Message(role=MessageRole.USER, content=question))
@@ -354,6 +391,8 @@ class SyntheticGenerator(BaseGenerator):
                 ))
             else:
                 for turn in turns:
+                    if not isinstance(turn, dict):
+                        continue
                     user_msg = self._get_key(turn, "user", "question", "prompt", "input")
                     asst_msg = self._get_key(turn, "assistant", "answer", "response", "output")
                     messages.append(Message(role=MessageRole.USER, content=user_msg))
